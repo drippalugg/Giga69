@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.giga67.controller.CartController"
+            styleClass="root">
+
+    <!-- Header -->
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="20" styleClass="header-top">
+            <padding>
+                <Insets top="15" right="30" bottom="15" left="30"/>
+            </padding>
+
+            <Button text="← Назад" onAction="#goBack" styleClass="back-button"/>
+            <Label text="Корзина" styleClass="page-title"/>
+        </HBox>
+    </top>
+
+    <!-- Content -->
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="content-scroll">
+            <VBox spacing="20" alignment="TOP_CENTER">
+                <padding>
+                    <Insets top="30" right="30" bottom="30" left="30"/>
+                </padding>
+
+                <Label fx:id="emptyCartLabel" text="Корзина пуста" styleClass="empty-message" visible="false"/>
+
+                <VBox fx:id="cartItemsContainer" spacing="15" styleClass="cart-items-container"
+                      prefWidth="900"/>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <!-- Footer with Total -->
+    <bottom>
+        <VBox spacing="15" styleClass="cart-footer">
+            <padding>
+                <Insets top="20" right="30" bottom="20" left="30"/>
+            </padding>
+
+            <Separator/>
+
+            <HBox alignment="CENTER_RIGHT" spacing="20">
+                <Label text="Итого:" styleClass="total-label"/>
+                <Label fx:id="totalPriceLabel" text="0 ₽" styleClass="total-price"/>
+            </HBox>
+
+            <HBox spacing="15" alignment="CENTER_RIGHT">
+                <Button fx:id="checkoutButton" text="Оформить заказ" onAction="#checkout"
+                        styleClass="primary-button-large"/>
+            </HBox>
+        </VBox>
+    </bottom>
+</BorderPane>

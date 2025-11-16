@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.giga67.controller.FavoritesController"
+            styleClass="root">
+
+    <!-- Header -->
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="20" styleClass="header-top">
+            <padding>
+                <Insets top="15" right="30" bottom="15" left="30"/>
+            </padding>
+            <Button text="← Назад" onAction="#goBack" styleClass="back-button"/>
+            <Label text="💖 Избранное" styleClass="page-title"/>
+        </HBox>
+    </top>
+
+    <!-- Content -->
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="content-scroll">
+            <VBox spacing="20" alignment="TOP_CENTER">
+                <padding>
+                    <Insets top="30" right="30" bottom="30" left="30"/>
+                </padding>
+                <FlowPane fx:id="productsPane" hgap="20" vgap="20" alignment="CENTER"
+                          prefWrapLength="1200"/>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

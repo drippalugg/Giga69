@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.giga67.controller.ProductController"
+            styleClass="root">
+
+    <!-- Header -->
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="20" styleClass="header-top">
+            <padding>
+                <Insets top="15" right="30" bottom="15" left="30"/>
+            </padding>
+
+            <Button text="← Назад" onAction="#goBack" styleClass="back-button"/>
+            <Label text="Информация о товаре" styleClass="page-title"/>
+        </HBox>
+    </top>
+
+    <!-- Content -->
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="content-scroll">
+            <HBox spacing="50" alignment="CENTER">
+                <padding>
+                    <Insets top="50" right="50" bottom="50" left="50"/>
+                </padding>
+
+                <!-- Product Image -->
+                <VBox alignment="CENTER" styleClass="product-image-box">
+                    <ImageView fx:id="productImageView" fitWidth="300" fitHeight="300" preserveRatio="true">
+                        <Image url="@../../../placeholder.png"/>
+                    </ImageView>
+                </VBox>
+
+                <!-- Product Info -->
+                <VBox spacing="20" prefWidth="500">
+                    <Label fx:id="nameLabel" text="Название товара" styleClass="product-title"/>
+                    <Label fx:id="brandLabel" text="Бренд:" styleClass="product-info"/>
+                    <Label fx:id="articleLabel" text="Артикул:" styleClass="product-info"/>
+
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <Label fx:id="priceLabel" text="0 ₽" styleClass="product-price-large"/>
+                        <Label fx:id="oldPriceLabel" text="0 ₽" styleClass="old-price-large" visible="false"/>
+                        <Label fx:id="discountLabel" text="-0%" styleClass="discount-badge-large" visible="false"/>
+                    </HBox>
+
+                    <Separator/>
+
+                    <Label text="Описание:" styleClass="section-subtitle"/>
+                    <Label fx:id="descriptionLabel" text="Описание товара" wrapText="true"
+                           styleClass="product-description"/>
+
+                    <Separator/>
+
+                    <Label text="Характеристики:" styleClass="section-subtitle"/>
+                    <Label fx:id="specificationsLabel" text="" wrapText="true"
+                           styleClass="product-description" visible="false" managed="false"/>
+
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <Label text="Количество:" styleClass="product-info"/>
+                        <Spinner fx:id="quantitySpinner" prefWidth="100"/>
+                    </HBox>
+
+                    <HBox spacing="15">
+                        <Button text="🛒 Добавить в корзину" onAction="#addToCart"
+                                styleClass="primary-button-large" prefWidth="300"/>
+                        <Button fx:id="favoriteButton" text="🤍 В избранное" onAction="#toggleFavorite"
+                                styleClass="secondary-button"/>
+                    </HBox>
+                </VBox>
+            </HBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

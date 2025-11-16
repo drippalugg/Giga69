@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.giga67.controller.ProfileController"
+            styleClass="root">
+
+    <!-- Header -->
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="20" styleClass="header-top">
+            <padding>
+                <Insets top="15" right="30" bottom="15" left="30"/>
+            </padding>
+
+            <Button text="← Назад" onAction="#goBack" styleClass="back-button"/>
+            <Label text="Профиль пользователя" styleClass="page-title"/>
+        </HBox>
+    </top>
+
+    <!-- Content -->
+    <center>
+        <VBox spacing="30" alignment="CENTER" styleClass="profile-container">
+            <padding>
+                <Insets top="50" right="50" bottom="50" left="50"/>
+            </padding>
+
+            <Label text="👤" style="-fx-font-size: 80px;"/>
+
+            <VBox spacing="15" alignment="CENTER" prefWidth="400">
+                <Label text="Информация о пользователе" styleClass="section-title"/>
+
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Имя:" styleClass="profile-label"/>
+                    <Label fx:id="nameLabel" text="Пользователь" styleClass="profile-value"/>
+                </HBox>
+
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Email:" styleClass="profile-label"/>
+                    <Label fx:id="emailLabel" text="user@example.com" styleClass="profile-value"/>
+                </HBox>
+
+                <Separator/>
+
+                <Button text="Выйти из аккаунта" onAction="#logout" styleClass="danger-button"/>
+            </VBox>
+        </VBox>
+    </center>
+</BorderPane>

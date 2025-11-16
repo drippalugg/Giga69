@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.giga67.controller.LoginController"
+            styleClass="root">
+
+    <!-- Header -->
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="20" styleClass="header-top">
+            <padding>
+                <Insets top="15" right="30" bottom="15" left="30"/>
+            </padding>
+
+            <Button text="← Назад" onAction="#goBack" styleClass="back-button"/>
+            <Label text="Вход в систему" styleClass="page-title"/>
+        </HBox>
+    </top>
+
+    <!-- Content -->
+    <center>
+        <VBox spacing="25" alignment="CENTER" styleClass="login-container">
+            <padding>
+                <Insets top="50" right="50" bottom="50" left="50"/>
+            </padding>
+
+            <Label text="MasterParts" styleClass="login-logo"/>
+            <Label text="Войдите в свой аккаунт" styleClass="login-subtitle"/>
+
+            <VBox spacing="15" prefWidth="400">
+                <Label text="Email:" styleClass="form-label"/>
+                <TextField fx:id="emailField" promptText="Введите email" styleClass="form-input"/>
+
+                <Label text="Пароль:" styleClass="form-label"/>
+                <PasswordField fx:id="passwordField" promptText="Введите пароль" styleClass="form-input"/>
+
+                <VBox fx:id="registerBox" spacing="15" visible="false" managed="false">
+                    <Label text="Имя:" styleClass="form-label"/>
+                    <TextField fx:id="nameField" promptText="Введите имя" styleClass="form-input"/>
+                </VBox>
+
+                <Label fx:id="errorLabel" text="" styleClass="error-label"/>
+
+                <Button text="Войти" onAction="#handleLogin" styleClass="primary-button-large"/>
+                <Button text="Зарегистрироваться" onAction="#handleRegister" styleClass="secondary-button"/>
+
+                <Button text="Продолжить как гость" onAction="#guestContinue" styleClass="link-button"/>
+            </VBox>
+        </VBox>
+    </center>
+</BorderPane>
