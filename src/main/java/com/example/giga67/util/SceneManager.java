@@ -12,13 +12,13 @@ import javafx.scene.Scene;
 public class SceneManager {
 
     public static void goToMain() {
-        loadScene("/com/example/partsstore/view/main.fxml", "MasterParts - Энгельс", 1280, 800);
+        loadScene("/com/example/giga67/view/main.fxml", "MasterParts - Энгельс", 1280, 800);
     }
 
     public static void goToCategory(Category category) {
         try {
             FXMLLoader loader = new FXMLLoader(
-                    SceneManager.class.getResource("/com/example/partsstore/view/category.fxml")
+                    SceneManager.class.getResource("/com/example/giga67/view/category.fxml")
             );
             Parent root = loader.load();
 
@@ -39,7 +39,7 @@ public class SceneManager {
     public static void goToProduct(Part part) {
         try {
             FXMLLoader loader = new FXMLLoader(
-                    SceneManager.class.getResource("/com/example/partsstore/view/product.fxml")
+                    SceneManager.class.getResource("/com/example/giga67/view/product.fxml")
             );
             Parent root = loader.load();
 
@@ -58,15 +58,15 @@ public class SceneManager {
     }
 
     public static void goToCart() {
-        loadScene("/com/example/partsstore/view/cart.fxml", "MasterParts - Корзина", 1280, 800);
+        loadScene("/com/example/giga67/view/cart.fxml", "MasterParts - Корзина", 1280, 800);
     }
 
     public static void goToLogin() {
-        loadScene("/com/example/partsstore/view/login.fxml", "MasterParts - Вход", 600, 700);
+        loadScene("/com/example/giga67/view/login.fxml", "MasterParts - Вход", 600, 700);
     }
 
     public static void goToProfile() {
-        loadScene("/com/example/partsstore/view/profile.fxml", "MasterParts - Профиль", 800, 600);
+        loadScene("/com/example/giga67/view/profile.fxml", "MasterParts - Профиль", 800, 600);
     }
 
     private static void loadScene(String fxmlPath, String title, int width, int height) {
