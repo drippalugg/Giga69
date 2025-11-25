@@ -1,5 +1,3 @@
-/* ==================== СОВРЕМЕННЫЙ ДИЗАЙН MASTERPARTS ==================== */
-
 .root {
     -fx-background-color: #FAFAFA;
     -fx-font-family: "Segoe UI", Arial, sans-serif;
@@ -513,26 +511,6 @@
     -fx-font-size: 15px;
     -fx-font-weight: bold;
     -fx-text-fill: #000000;
-}
-
-/* ==================== BLACK FRIDAY BANNER ==================== */
-
-.black-friday-banner {
-    -fx-background-color: #FF4757;
-    -fx-background-radius: 20;
-    -fx-effect: dropshadow(gaussian, rgba(255,71,87,0.4), 20, 0, 0, 8);
-}
-
-.banner-title {
-    -fx-font-size: 38px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #FFFFFF;
-}
-
-.banner-text {
-    -fx-font-size: 20px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #FFFFFF;
 }
 
 /* ==================== SPINNER ==================== */

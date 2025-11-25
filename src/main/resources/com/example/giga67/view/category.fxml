@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.example.giga67.controller.FavoritesController"
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.giga67.controller.CategoryController"
             styleClass="root">
 
     <!-- Header -->
@@ -12,8 +14,18 @@
             <padding>
                 <Insets top="15" right="30" bottom="15" left="30"/>
             </padding>
+
             <Button text="← Назад" onAction="#goBack" styleClass="back-button"/>
-            <Label text="💖 Избранное" styleClass="page-title"/>
+            <Label fx:id="titleLabel" text="Категория" styleClass="page-title"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <TextField fx:id="searchField" promptText="Поиск..." prefWidth="300" styleClass="search-input"/>
+
+            <StackPane>
+                <Button text="🛒 Корзина" onAction="#openCart" styleClass="header-button"/>
+                <Label fx:id="cartBadge" styleClass="badge" visible="false"/>
+            </StackPane>
         </HBox>
     </top>
 
@@ -24,6 +36,7 @@
                 <padding>
                     <Insets top="30" right="30" bottom="30" left="30"/>
                 </padding>
+
                 <FlowPane fx:id="productsPane" hgap="20" vgap="20" alignment="CENTER"
                           prefWrapLength="1200"/>
             </VBox>

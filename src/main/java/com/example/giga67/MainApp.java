@@ -38,7 +38,7 @@ public class MainApp extends Application {
             Scene scene = new Scene(root);
 
             // Путь к CSS - ИСПРАВЛЕН
-            String cssPath = "/css/styles.css";
+            String cssPath = "/com/example/giga67/css/styles.css";
             System.out.println("🔍 Поиск CSS: " + cssPath);
 
             URL cssUrl = getClass().getResource(cssPath);
@@ -65,7 +65,5 @@ public class MainApp extends Application {
         return primaryStage;
     }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+
 }

@@ -3,7 +3,6 @@ package com.example.giga67.controller;
 import com.example.giga67.model.Order;
 import com.example.giga67.util.SceneNavigator;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;

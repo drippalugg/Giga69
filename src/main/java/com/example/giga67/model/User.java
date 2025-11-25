@@ -14,7 +14,7 @@ public class User {
         this.name = name;
     }
 
-    // Getters and Setters
+    // Геттеры и сеттеры
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 

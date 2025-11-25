@@ -3,8 +3,6 @@ package com.example.giga67.service;
 import com.example.giga67.model.User;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-
-import java.io.IOException;
 import java.net.http.HttpResponse;
 
 public class SupabaseAuthService {
@@ -85,7 +83,4 @@ public class SupabaseAuthService {
         return currentUser;
     }
 
-    public String getAccessToken() {
-        return accessToken;
-    }
 }

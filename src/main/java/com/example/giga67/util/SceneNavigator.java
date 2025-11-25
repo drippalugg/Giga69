@@ -117,7 +117,7 @@ public class SceneNavigator {
     }
 
     private static void addCSS(Scene scene) {
-        var cssUrl = SceneNavigator.class.getResource("/css/styles.css");
+        var cssUrl = SceneNavigator.class.getResource("/com/example/giga67/css/styles.css");
         if (cssUrl != null) {
             scene.getStylesheets().add(cssUrl.toExternalForm());
         }

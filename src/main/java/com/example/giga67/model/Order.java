@@ -13,7 +13,7 @@ public class Order {
 
     public Order() {}
 
-    // Getters and Setters
+    // Геттеры и сеттеры
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 

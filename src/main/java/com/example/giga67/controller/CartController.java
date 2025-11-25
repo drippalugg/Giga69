@@ -139,12 +139,6 @@ public class CartController {
     }
 
     @FXML
-    private void continueShopping() {
-        System.out.println("🛍️ Продолжить покупки");
-        SceneNavigator.goToMain();
-    }
-
-    @FXML
     private void goBack() {
         System.out.println("← Возврат на главную");
         SceneNavigator.goToMain();

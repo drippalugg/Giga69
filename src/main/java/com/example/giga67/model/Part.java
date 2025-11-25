@@ -15,8 +15,6 @@ public class Part {
     private String imageUrl;
     private Map<String, String> specifications;
 
-    public Part() {}
-
     public Part(int id, String name, int categoryId, double price, String article, String brand) {
         this.id = id;
         this.name = name;
@@ -26,7 +24,7 @@ public class Part {
         this.brand = brand;
     }
 
-    // Getters and Setters
+    // Геттеры и сеттеры
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
