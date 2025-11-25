@@ -2,6 +2,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+
 <BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.example.giga67.controller.FavoritesController"
             styleClass="root">
@@ -19,14 +20,33 @@
 
     <!-- Content -->
     <center>
-        <ScrollPane fitToWidth="true" styleClass="content-scroll">
-            <VBox spacing="20" alignment="TOP_CENTER">
-                <padding>
-                    <Insets top="30" right="30" bottom="30" left="30"/>
-                </padding>
-                <FlowPane fx:id="productsPane" hgap="20" vgap="20" alignment="CENTER"
-                          prefWrapLength="1200"/>
-            </VBox>
-        </ScrollPane>
+        <VBox spacing="20" styleClass="cart-container">
+            <padding>
+                <Insets top="30" right="30" bottom="30" left="30"/>
+            </padding>
+
+            <!--  StackPane для центрирования сообщения -->
+            <StackPane VBox.vgrow="ALWAYS">
+                <!-- ScrollPane с FlowPane для карточек товаров -->
+                <ScrollPane fx:id="favoritesScrollPane"
+                            fitToWidth="true"
+                            styleClass="content-scroll"
+                            style="-fx-background-color: transparent;">
+                    <FlowPane fx:id="productsPane"
+                              hgap="20"
+                              vgap="20"
+                              alignment="CENTER"
+                              prefWrapLength="1200"
+                              style="-fx-background-color: transparent;"/>
+                </ScrollPane>
+
+                <!-- Центрированное сообщение о пустом избранном -->
+                <Label fx:id="emptyLabel"
+                       text="Избранное пусто"
+                       styleClass="empty-message"
+                       visible="false"
+                       StackPane.alignment="CENTER"/>
+            </StackPane>
+        </VBox>
     </center>
 </BorderPane>

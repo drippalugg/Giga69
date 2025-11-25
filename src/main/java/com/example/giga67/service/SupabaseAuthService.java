@@ -6,14 +6,25 @@ import com.google.gson.JsonObject;
 import java.net.http.HttpResponse;
 
 public class SupabaseAuthService {
+    private static SupabaseAuthService instance;
+
     private final SupabaseClient client;
     private final Gson gson;
     private User currentUser;
     private String accessToken;
 
-    public SupabaseAuthService() {
+    private SupabaseAuthService() {
         this.client = SupabaseClient.getInstance();
         this.gson = new Gson();
+        System.out.println("🔐 SupabaseAuthService initialized");
+    }
+
+    // 🔥 Добавлен метод получения экземпляра
+    public static synchronized SupabaseAuthService getInstance() {
+        if (instance == null) {
+            instance = new SupabaseAuthService();
+        }
+        return instance;
     }
 
     public boolean login(String email, String password) {
@@ -27,20 +38,25 @@ public class SupabaseAuthService {
                     gson.toJson(credentials)
             );
 
+            System.out.println("🔐 Login response status: " + response.statusCode());
+            System.out.println("📩 Response body: " + response.body());
+
             if (response.statusCode() == 200) {
                 JsonObject jsonResponse = gson.fromJson(response.body(), JsonObject.class);
                 accessToken = jsonResponse.get("access_token").getAsString();
-
                 JsonObject userJson = jsonResponse.getAsJsonObject("user");
+
                 currentUser = new User(
                         userJson.get("id").getAsString(),
                         userJson.get("email").getAsString(),
                         email.split("@")[0]
                 );
 
+                System.out.println("✅ Пользователь залогинен: " + currentUser.getEmail());
                 return true;
             }
         } catch (Exception e) {
+            System.err.println("❌ Login error: " + e.getMessage());
             e.printStackTrace();
         }
         return false;
@@ -61,10 +77,14 @@ public class SupabaseAuthService {
                     gson.toJson(credentials)
             );
 
+            System.out.println("📝 Register response status: " + response.statusCode());
+            System.out.println("📩 Response body: " + response.body());
+
             if (response.statusCode() == 200) {
                 return login(email, password);
             }
         } catch (Exception e) {
+            System.err.println("❌ Register error: " + e.getMessage());
             e.printStackTrace();
         }
         return false;
@@ -73,14 +93,20 @@ public class SupabaseAuthService {
     public void logout() {
         currentUser = null;
         accessToken = null;
+        System.out.println("👋 Пользователь вышел");
     }
 
     public boolean isLoggedIn() {
-        return currentUser != null;
+        boolean loggedIn = currentUser != null;
+        System.out.println("🔍 isLoggedIn проверка: " + loggedIn);
+        return loggedIn;
     }
 
     public User getCurrentUser() {
         return currentUser;
     }
 
+    public String getAccessToken() {
+        return accessToken;
+    }
 }

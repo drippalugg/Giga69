@@ -11,31 +11,24 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 public class CategoryController {
-    @FXML
-    private Label titleLabel;
-    @FXML
-    private TextField searchField;
-    @FXML
-    private FlowPane productsPane;
-    @FXML
-    private Label cartBadge;
+    @FXML private Label titleLabel;
+    @FXML private FlowPane productsPane;
 
     private PartsService partsService;
     private CartManager cartManager;
     private Category currentCategory;
-    private String searchQuery;
 
     @FXML
     public void initialize() {
         partsService = new PartsService();
         cartManager = CartManager.getInstance();
-        updateCartBadge();
         System.out.println("✅ CategoryController initialized!");
     }
 
@@ -48,9 +41,8 @@ public class CategoryController {
     }
 
     public void setSearchQuery(String query) {
-        this.searchQuery = query;
         if (titleLabel != null) {
-            titleLabel.setText("Результаты поиска: " + query);
+            titleLabel.setText("🔍 Результаты поиска: " + query);
         }
         loadProducts(partsService.searchParts(query));
     }
@@ -64,8 +56,8 @@ public class CategoryController {
         productsPane.getChildren().clear();
 
         if (products.isEmpty()) {
-            Label noProducts = new Label("Товары не найдены");
-            noProducts.setStyle("-fx-font-size: 18px; -fx-text-fill: #666;");
+            Label noProducts = new Label("📦 Товары не найдены");
+            noProducts.getStyleClass().add("empty-message");
             productsPane.getChildren().add(noProducts);
             return;
         }
@@ -74,108 +66,148 @@ public class CategoryController {
             VBox productCard = createProductCard(part);
             productsPane.getChildren().add(productCard);
         }
+
+        System.out.println("✅ Загружено товаров: " + products.size());
     }
 
     private VBox createProductCard(Part part) {
-        VBox card = new VBox(10);
-        card.setAlignment(Pos.TOP_LEFT);
-        card.setStyle("-fx-background-color: #F9F9F9; -fx-background-radius: 10; -fx-cursor: hand;");
-        card.setPrefSize(250, 320);
-        card.setPadding(new Insets(15));
+        VBox card = new VBox(12);
+        card.setAlignment(Pos.TOP_CENTER);
+        card.setPrefSize(280, 400);
+        card.getStyleClass().add("product-card");
+        card.setPadding(new Insets(20));
 
-        Label iconLabel = new Label("📦");
-        iconLabel.setStyle("-fx-font-size: 60px;");
-        iconLabel.setAlignment(Pos.CENTER);
-        iconLabel.setMaxWidth(Double.MAX_VALUE);
+        // Иконка
+        Label iconLabel = new Label("🎁");
+        iconLabel.setStyle("-fx-font-size: 80px;");
 
+        // Название
         Label nameLabel = new Label(part.getName());
-        nameLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
+        nameLabel.getStyleClass().add("product-name");
         nameLabel.setWrapText(true);
-        nameLabel.setMaxHeight(40);
+        nameLabel.setMaxWidth(240);
+        nameLabel.setAlignment(Pos.CENTER);
 
+        // Артикул
         Label articleLabel = new Label("Арт: " + part.getArticle());
-        articleLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #666;");
+        articleLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #666;");
 
+        // Бренд
         Label brandLabel = new Label(part.getBrand());
-        brandLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #666;");
+        brandLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #666; -fx-font-weight: bold;");
 
-        HBox priceBox = new HBox(10);
-        priceBox.setAlignment(Pos.CENTER_LEFT);
-        Label priceLabel = new Label(String.format("%.0f ₽", part.getPrice()));
-        priceLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
+        // Спейсер
+        Region spacer = new Region();
+        VBox.setVgrow(spacer, Priority.ALWAYS);
+
+        // Цена и скидка
+        VBox priceBox = new VBox(5);
+        priceBox.setAlignment(Pos.CENTER);
 
         if (part.hasDiscount()) {
+            // 🔥 ЗАЧЁРКНУТАЯ СТАРАЯ ЦЕНА
             Label oldPriceLabel = new Label(String.format("%.0f ₽", part.getOldPrice()));
-            oldPriceLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #999; -fx-strikethrough: true;");
+            oldPriceLabel.setStyle(
+                    "-fx-font-size: 16px; " +
+                            "-fx-text-fill: #999999; " +
+                            "-fx-strikethrough: true;"
+            );
+
+            // Новая цена
+            Label priceLabel = new Label(String.format("%.0f ₽", part.getPrice()));
+            priceLabel.setStyle(
+                    "-fx-font-size: 24px; " +
+                            "-fx-font-weight: bold; " +
+                            "-fx-text-fill: #000000;"
+            );
+
+            // Бейдж скидки
             Label discountLabel = new Label("-" + part.getDiscountPercent() + "%");
-            discountLabel.setStyle("-fx-background-color: #FF4444; -fx-text-fill: white; -fx-padding: 3 8; -fx-background-radius: 5; -fx-font-size: 12px;");
-            priceBox.getChildren().addAll(priceLabel, oldPriceLabel, discountLabel);
+            discountLabel.setStyle(
+                    "-fx-background-color: #FF4757; " +
+                            "-fx-text-fill: #FFFFFF; " +
+                            "-fx-font-size: 12px; " +
+                            "-fx-font-weight: bold; " +
+                            "-fx-background-radius: 8; " +
+                            "-fx-padding: 4 10;"
+            );
+
+            priceBox.getChildren().addAll(oldPriceLabel, priceLabel, discountLabel);
         } else {
+            Label priceLabel = new Label(String.format("%.0f ₽", part.getPrice()));
+            priceLabel.setStyle(
+                    "-fx-font-size: 24px; " +
+                            "-fx-font-weight: bold; " +
+                            "-fx-text-fill: #000000;"
+            );
             priceBox.getChildren().add(priceLabel);
         }
 
+        // Кнопки
         HBox buttonsBox = new HBox(10);
         buttonsBox.setAlignment(Pos.CENTER);
 
-        Button cartButton = new Button("В корзину");
-        cartButton.setStyle("-fx-background-color: black; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 10 20;");
+        Button cartButton = new Button("🛒 В корзину");
+        cartButton.getStyleClass().add("primary-button");
+        cartButton.setMaxWidth(Double.MAX_VALUE);
         cartButton.setOnAction(e -> addToCart(part));
+        HBox.setHgrow(cartButton, Priority.ALWAYS);
 
-        Button favoriteButton = new Button(cartManager.isFavorite(part) ? "💖" : "🤎");
-        favoriteButton.setStyle("-fx-font-size: 18px; -fx-cursor: hand;");
+        Button favoriteButton = new Button(cartManager.isFavorite(part) ? "💖" : "❤");
+        favoriteButton.setStyle(
+                "-fx-font-size: 20px; " +
+                        "-fx-cursor: hand; " +
+                        "-fx-background-color: transparent; " +
+                        "-fx-padding: 8 12;"
+        );
         favoriteButton.setOnAction(e -> toggleFavorite(part, favoriteButton));
 
         buttonsBox.getChildren().addAll(cartButton, favoriteButton);
 
-        card.getChildren().addAll(iconLabel, nameLabel, articleLabel, brandLabel, priceBox, buttonsBox);
+        card.getChildren().addAll(
+                iconLabel,
+                nameLabel,
+                articleLabel,
+                brandLabel,
+                spacer,
+                priceBox,
+                buttonsBox
+        );
 
-        card.setOnMouseClicked(e -> {
-            if (e.getClickCount() == 2) {
-                openProduct(part);
-            }
-        });
+        card.setOnMouseClicked(e -> openProduct(part));
 
         return card;
     }
 
     private void addToCart(Part part) {
         cartManager.addToCart(part, 1);
-        updateCartBadge();
-        System.out.println("🛒 Added to cart: " + part.getName());
+        System.out.println("🛒 Добавлено в корзину: " + part.getName());
     }
 
     private void toggleFavorite(Part part, Button button) {
         if (cartManager.isFavorite(part)) {
             cartManager.removeFromFavorites(part);
-            button.setText("🤎");
+            button.setText("❤");
         } else {
             cartManager.addToFavorites(part);
             button.setText("💖");
         }
     }
 
-    private void updateCartBadge() {
-        if (cartBadge != null) {
-            int count = cartManager.getTotalItems();
-            cartBadge.setText(count > 0 ? String.valueOf(count) : "");
-            cartBadge.setVisible(count > 0);
-        }
-    }
-
     private void openProduct(Part part) {
-        System.out.println("📦 Opening product: " + part.getName());
+        System.out.println("📦 Открытие товара: " + part.getName());
         SceneNavigator.goToProduct(part);
     }
 
     @FXML
     private void goBack() {
-        System.out.println("← Go back clicked");
+        System.out.println("← Возврат на главную");
         SceneNavigator.goToMain();
     }
 
     @FXML
     private void openCart() {
-        System.out.println("🛒 Cart clicked");
+        System.out.println("🛒 Переход в корзину");
         SceneNavigator.goToCart();
     }
 }

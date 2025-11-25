@@ -10,51 +10,30 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import java.util.Map;
 
 public class ProductController {
-
-    @FXML
-    private Label nameLabel;
-
-    @FXML
-    private Label brandLabel;
-
-    @FXML
-    private Label articleLabel;
-
-    @FXML
-    private Label priceLabel;
-
-    @FXML
-    private Label oldPriceLabel;
-
-    @FXML
-    private Label discountLabel;
-
-    @FXML
-    private Label descriptionLabel;
-
-    @FXML
-    private Spinner<Integer> quantitySpinner;
-
-    @FXML
-    private Button favoriteButton;
-
+    @FXML private Label nameLabel;
+    @FXML private Label brandLabel;
+    @FXML private Label articleLabel;
+    @FXML private Label priceLabel;
+    @FXML private Label oldPriceLabel;
+    @FXML private Label discountLabel;
+    @FXML private Label descriptionLabel;
+    @FXML private Spinner<Integer> quantitySpinner;
+    @FXML private Button favoriteButton;
+    @FXML private ImageView productImageView;
+    @FXML private Label specificationsLabel;
 
     private Part currentPart;
     private CartManager cartManager;
-    @FXML
-    private ImageView productImageView;
 
-    @FXML
-    private Label specificationsLabel;
     @FXML
     public void initialize() {
         cartManager = CartManager.getInstance();
 
         SpinnerValueFactory<Integer> valueFactory =
                 new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 99, 1);
+
         if (quantitySpinner != null) {
             quantitySpinner.setValueFactory(valueFactory);
         }
@@ -73,22 +52,27 @@ public class ProductController {
             return;
         }
 
+        // Название
         if (nameLabel != null) {
             nameLabel.setText(currentPart.getName());
         }
 
+        // Бренд
         if (brandLabel != null) {
             brandLabel.setText("Бренд: " + currentPart.getBrand());
         }
 
+        // Артикул
         if (articleLabel != null) {
             articleLabel.setText("Артикул: " + currentPart.getArticle());
         }
 
+        // Цена
         if (priceLabel != null) {
             priceLabel.setText(String.format("%.0f ₽", currentPart.getPrice()));
         }
 
+        // Скидка
         if (currentPart.hasDiscount()) {
             if (oldPriceLabel != null) {
                 oldPriceLabel.setText(String.format("%.0f ₽", currentPart.getOldPrice()));
@@ -107,12 +91,13 @@ public class ProductController {
             }
         }
 
+        // Описание
         if (descriptionLabel != null) {
             descriptionLabel.setText(currentPart.getDescription() != null ?
                     currentPart.getDescription() : "Описание товара");
         }
 
-        // Загрузка изображения товара
+        // Загрузка изображения товара (пока не используется)
         if (productImageView != null) {
             String imageUrl = currentPart.getImageUrl();
             if (imageUrl != null && !imageUrl.isEmpty()) {
@@ -120,27 +105,31 @@ public class ProductController {
                     Image image = new Image(imageUrl, true);
                     productImageView.setImage(image);
                 } catch (Exception e) {
-                    System.err.println("Ошибка загрузки изображения: " + e.getMessage());
+                    System.err.println("⚠️ Ошибка загрузки изображения: " + e.getMessage());
                 }
             }
         }
 
-        // Отображение характеристик товара
-        if (specificationsLabel != null && currentPart.getSpecifications() != null && !currentPart.getSpecifications().isEmpty()) {
-            StringBuilder specs = new StringBuilder();
-            for (Map.Entry<String, String> entry : currentPart.getSpecifications().entrySet()) {
-                specs.append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
+        // 🔥 ИСПРАВЛЕНО: Отображение характеристик как строки
+        if (specificationsLabel != null) {
+            String specs = currentPart.getSpecifications();
+            if (specs != null && !specs.isEmpty()) {
+                specificationsLabel.setText(specs);
+                specificationsLabel.setVisible(true);
+                specificationsLabel.setManaged(true);
+            } else {
+                specificationsLabel.setVisible(false);
+                specificationsLabel.setManaged(false);
             }
-            specificationsLabel.setText(specs.toString());
-            specificationsLabel.setVisible(true);
-            specificationsLabel.setManaged(true);
-        }updateFavoriteButton();
+        }
+
+        updateFavoriteButton();
     }
 
     private void updateFavoriteButton() {
         if (favoriteButton != null && currentPart != null) {
             if (cartManager.isFavorite(currentPart)) {
-                favoriteButton.setText("❤️ В избранном");
+                favoriteButton.setText("💖 В избранном");
             } else {
                 favoriteButton.setText("🤍 В избранное");
             }
@@ -161,7 +150,6 @@ public class ProductController {
 
         cartManager.addToCart(currentPart, quantity);
         System.out.println("🛒 Добавлено в корзину: " + currentPart.getName() + " x" + quantity);
-
         SceneNavigator.goToCart();
     }
 
@@ -177,7 +165,7 @@ public class ProductController {
             System.out.println("💔 Удалено из избранного: " + currentPart.getName());
         } else {
             cartManager.addToFavorites(currentPart);
-            System.out.println("❤️ Добавлено в избранное: " + currentPart.getName());
+            System.out.println("💖 Добавлено в избранное: " + currentPart.getName());
         }
 
         updateFavoriteButton();

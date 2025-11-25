@@ -2,35 +2,54 @@ package com.example.giga67.controller;
 
 import com.example.giga67.model.Category;
 import com.example.giga67.service.PartsService;
+import com.example.giga67.service.SupabaseAuthService;
 import com.example.giga67.util.SceneNavigator;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 
 public class MainController {
-    @FXML
-    private Label locationLabel;
-    @FXML
-    private TextField searchField;
-    @FXML
-    private FlowPane categoriesPane;
+    @FXML private Label locationLabel;
+    @FXML private TextField searchField;
+    @FXML private FlowPane categoriesPane;
+    @FXML private Button loginButton;
 
     private PartsService partsService;
+    private SupabaseAuthService authService;
 
     @FXML
     public void initialize() {
         System.out.println("✅ MainController initialized!");
+
         partsService = new PartsService();
+        authService = SupabaseAuthService.getInstance();
+
         if (locationLabel != null) {
             locationLabel.setText("📍 Энгельс");
         }
+
         loadCategories();
+        updateLoginButton();
+
         System.out.println("📦 Loaded " + partsService.getCategories().size() + " categories");
         System.out.println("🛍️ Loaded " + partsService.getParts().size() + " products");
+    }
+
+    private void updateLoginButton() {
+        if (loginButton != null) {
+            if (authService.isLoggedIn()) {
+                loginButton.setText("👤 " + authService.getCurrentUser().getName());
+                System.out.println("✅ Пользователь залогинен: " + authService.getCurrentUser().getEmail());
+            } else {
+                loginButton.setText("👤 Войти");
+                System.out.println("⚠️ Пользователь не залогинен");
+            }
+        }
     }
 
     private void loadCategories() {
@@ -112,6 +131,16 @@ public class MainController {
     @FXML
     private void handleLogin() {
         System.out.println("👤 Войти clicked");
-        SceneNavigator.goToLogin();
+        System.out.println("🔍 Текущий статус: isLoggedIn = " + authService.isLoggedIn());
+
+        if (authService.isLoggedIn()) {
+            // Если пользователь залогинен - идём в профиль
+            System.out.println("✅ Переход в профиль");
+            SceneNavigator.goToProfile();
+        } else {
+            // Если не залогинен - идём на экран входа
+            System.out.println("⚠️ Переход на экран входа");
+            SceneNavigator.goToLogin();
+        }
     }
 }

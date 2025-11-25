@@ -20,8 +20,6 @@
 
             <Region HBox.hgrow="ALWAYS"/>
 
-            <TextField fx:id="searchField" promptText="Поиск..." prefWidth="300" styleClass="search-input"/>
-
             <StackPane>
                 <Button text="🛒 Корзина" onAction="#openCart" styleClass="header-button"/>
                 <Label fx:id="cartBadge" styleClass="badge" visible="false"/>

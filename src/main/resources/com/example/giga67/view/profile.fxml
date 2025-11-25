@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -15,8 +14,12 @@
                 <Insets top="15" right="30" bottom="15" left="30"/>
             </padding>
 
-            <Button text="← Назад" onAction="#goBack" styleClass="back-button"/>
-            <Label text="Профиль пользователя" styleClass="page-title"/>
+            <Button text="← Назад"
+                    onAction="#goBack"
+                    styleClass="back-button"/>
+
+            <Label text="👤 Профиль"
+                   styleClass="page-title"/>
         </HBox>
     </top>
 
@@ -24,27 +27,59 @@
     <center>
         <VBox spacing="30" alignment="CENTER" styleClass="profile-container">
             <padding>
-                <Insets top="50" right="50" bottom="50" left="50"/>
+                <Insets top="60" right="40" bottom="60" left="40"/>
             </padding>
 
-            <Label text="👤" style="-fx-font-size: 80px;"/>
+            <!-- Заголовок -->
+            <VBox spacing="10" alignment="CENTER">
+                <Label text="Профиль пользователя"
+                       style="-fx-font-size: 32px; -fx-font-weight: bold;"/>
+                <Label text="Управление вашими данными"
+                       style="-fx-font-size: 16px; -fx-text-fill: #666;"/>
+            </VBox>
 
-            <VBox spacing="15" alignment="CENTER" prefWidth="400">
-                <Label text="Информация о пользователе" styleClass="section-title"/>
+            <!-- 🔥 УМЕНЬШЕНА КАРТОЧКА: maxWidth 500 → 420 -->
+            <VBox spacing="20"
+                  maxWidth="370"
+                  style="-fx-background-color: white; -fx-background-radius: 16; -fx-padding: 35; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 15, 0, 0, 4);">
 
-                <HBox spacing="10" alignment="CENTER_LEFT">
-                    <Label text="Имя:" styleClass="profile-label"/>
-                    <Label fx:id="nameLabel" text="Пользователь" styleClass="profile-value"/>
-                </HBox>
+                <!-- Имя -->
+                <VBox spacing="8">
+                    <Label text="👤 Имя" styleClass="form-label"/>
+                    <TextField fx:id="nameField"
+                               promptText="Ваше имя"
+                               styleClass="form-input"/>
+                </VBox>
 
-                <HBox spacing="10" alignment="CENTER_LEFT">
-                    <Label text="Email:" styleClass="profile-label"/>
-                    <Label fx:id="emailLabel" text="user@example.com" styleClass="profile-value"/>
-                </HBox>
+                <!-- Email (только для чтения) -->
+                <VBox spacing="8">
+                    <Label text="📧 Email" styleClass="form-label"/>
+                    <TextField fx:id="emailField"
+                               styleClass="form-input"
+                               editable="false"
+                               style="-fx-opacity: 0.7; -fx-background-color: #F5F5F5;"/>
+                </VBox>
 
-                <Separator/>
+                <!-- Сообщение об успехе/ошибке -->
+                <Label fx:id="messageLabel"
+                       text=""
+                       visible="false"
+                       wrapText="true"
+                       style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
 
-                <Button text="Выйти из аккаунта" onAction="#logout" styleClass="danger-button"/>
+                <!-- Кнопка сохранения -->
+                <Button text="💾 Сохранить изменения"
+                        onAction="#handleSave"
+                        styleClass="primary-button-large"
+                        maxWidth="Infinity"/>
+
+                <Separator style="-fx-padding: 5 0;"/>
+
+                <!-- Выход -->
+                <Button text="🚪 Выйти из аккаунта"
+                        onAction="#handleLogout"
+                        styleClass="danger-button"
+                        maxWidth="Infinity"/>
             </VBox>
         </VBox>
     </center>

@@ -18,7 +18,7 @@ public class MainApp extends Application {
             primaryStage = stage;
             primaryStage.setTitle("MasterParts - Энгельс");
             primaryStage.setWidth(1280);
-            primaryStage.setHeight(800);
+            primaryStage.setHeight(920);
 
             // Загружаем главное окно (НЕ login!)
             String fxmlPath = "/com/example/giga67/view/main.fxml";

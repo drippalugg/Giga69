@@ -52,19 +52,24 @@ public class PartsService {
                 for (var element : partsJson) {
                     JsonObject partJson = element.getAsJsonObject();
 
+                    // 🔥 ПОЛУЧАЕМ old_price (может быть null)
+                    double oldPrice = 0.0;
+                    if (partJson.has("old_price") && !partJson.get("old_price").isJsonNull()) {
+                        oldPrice = partJson.get("old_price").getAsDouble();
+                    }
+
+
                     Part part = new Part(
                             partJson.get("id").getAsInt(),
                             partJson.get("name").getAsString(),
-                            partJson.get("category_id").getAsInt(),
-                            partJson.get("price").getAsDouble(),
                             partJson.get("article").getAsString(),
-                            partJson.get("brand").getAsString()
+                            partJson.get("brand").getAsString(),
+                            partJson.get("price").getAsDouble(),
+                            oldPrice,
+                            partJson.get("category_id").getAsInt()
                     );
 
-                    if (partJson.has("old_price") && !partJson.get("old_price").isJsonNull()) {
-                        part.setOldPrice(partJson.get("old_price").getAsDouble());
-                    }
-
+                    // Если есть description - устанавливаем через setter
                     if (partJson.has("description") && !partJson.get("description").isJsonNull()) {
                         part.setDescription(partJson.get("description").getAsString());
                     }

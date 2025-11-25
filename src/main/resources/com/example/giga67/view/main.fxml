@@ -2,55 +2,80 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.example.giga67.controller.MainController">
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.giga67.controller.MainController"
+            styleClass="root">
 
     <!-- Header -->
     <top>
-        <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-background-color: white; -fx-border-color: #E0E0E0; -fx-border-width: 0 0 1 0;">
+        <HBox alignment="CENTER_LEFT" spacing="20" styleClass="header-top">
             <padding>
                 <Insets top="15" right="30" bottom="15" left="30"/>
             </padding>
-            <Label text="MasterParts" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
-            <Label fx:id="locationLabel" text="📍 Энгельс" style="-fx-font-size: 14px; -fx-text-fill: #666666;"/>
+
+            <Label text="MasterParts" styleClass="logo"/>
+            <Label fx:id="locationLabel" text="📍 Энгельс" styleClass="location"/>
+
             <Pane HBox.hgrow="ALWAYS"/>
-            <Button text="📦 Заказы" style="-fx-background-color: transparent; -fx-cursor: hand;"
-                    onAction="#handleOrders"/>
-            <Button text="💖 Избранное" style="-fx-background-color: transparent; -fx-cursor: hand;"
-                    onAction="#handleFavorites"/>
-            <Button text="🛒 Корзина" style="-fx-background-color: transparent; -fx-cursor: hand;"
-                    onAction="#handleCart"/>
-            <Button text="👤 Войти" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-padding: 8 16; -fx-cursor: hand; -fx-font-size: 14px; -fx-border-radius: 5;"
-                    onAction="#handleLogin"/>
+
+            <Button text="📦 Заказы"
+                    onAction="#handleOrders"
+                    styleClass="header-button"/>
+
+            <Button text="💖 Избранное"
+                    onAction="#handleFavorites"
+                    styleClass="header-button"/>
+
+            <Button text="🛒 Корзина"
+                    onAction="#handleCart"
+                    styleClass="header-button"/>
+
+            <Button text="👤 Войти"
+                    onAction="#handleLogin"
+                    styleClass="primary-button"/>
         </HBox>
     </top>
 
     <!-- Content -->
     <center>
-        <ScrollPane fitToWidth="true" style="-fx-background-color: white;">
-            <VBox spacing="30" alignment="TOP_CENTER" style="-fx-background-color: white;">
+        <ScrollPane fitToWidth="true" styleClass="content-scroll">
+            <VBox spacing="40" alignment="TOP_CENTER">
                 <padding>
                     <Insets top="40" right="30" bottom="40" left="30"/>
                 </padding>
 
                 <!-- Search Section -->
-                <VBox alignment="CENTER" spacing="15" style="-fx-background-color: #F9F9F9; -fx-background-radius: 10;">
+                <VBox spacing="25" alignment="CENTER" styleClass="search-section">
                     <padding>
-                        <Insets top="40" right="40" bottom="40" left="40"/>
+                        <Insets top="30" right="30" bottom="30" left="30"/>
                     </padding>
-                    <Label text="Поиск автозапчастей" style="-fx-font-size: 28px; -fx-font-weight: bold;"/>
-                    <HBox spacing="10" alignment="CENTER">
-                        <TextField fx:id="searchField" promptText="Введите название или артикул"
-                                   prefWidth="500" style="-fx-font-size: 16px; -fx-padding: 12;"/>
-                        <Button text="🔍 Найти" onAction="#handleSearch"
-                                style="-fx-background-color: black; -fx-text-fill: white; -fx-font-size: 16px; -fx-padding: 12 30; -fx-cursor: hand;"/>
+
+                    <Label text="🔍 Найдите нужную автозапчасть"
+                           styleClass="search-title"/>
+
+                    <HBox spacing="15" alignment="CENTER" maxWidth="700">
+                        <TextField fx:id="searchField"
+                                   promptText="Введите название или артикул..."
+                                   styleClass="search-input"
+                                   HBox.hgrow="ALWAYS"/>
+
+                        <Button text="🔍 Найти"
+                                onAction="#handleSearch"
+                                styleClass="search-button"/>
                     </HBox>
                 </VBox>
 
-                <!-- Categories Section -->
-                <VBox spacing="20" alignment="TOP_CENTER">
-                    <Label text="Категории" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
-                    <FlowPane fx:id="categoriesPane" hgap="20" vgap="20" alignment="CENTER" prefWrapLength="1200"/>
+                <!-- Секция категорий -->
+                <VBox spacing="25" alignment="TOP_CENTER">
+                    <Label text="📂 Категории"
+                           styleClass="section-title"/>
+
+                    <FlowPane fx:id="categoriesPane"
+                              hgap="20"
+                              vgap="20"
+                              alignment="CENTER"
+                              prefWrapLength="1200"/>
                 </VBox>
             </VBox>
         </ScrollPane>

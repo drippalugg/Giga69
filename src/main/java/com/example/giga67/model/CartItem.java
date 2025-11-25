@@ -41,4 +41,15 @@ public class CartItem {
         }
         return getTotalPrice();
     }
+    @Override
+    public String toString() {
+        if (part == null) {
+            return "Неизвестный товар";
+        }
+        return String.format("%s × %d = %.2f ₽",
+                part.getName(),
+                quantity,
+                getTotalPrice()
+        );
+    }
 }
