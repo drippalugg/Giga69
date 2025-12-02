@@ -74,7 +74,7 @@ public class SceneNavigator {
     }
 
     public static void goToLogin() {
-        loadScene("/com/example/giga67/view/login.fxml", "MasterParts - Вход", 800, 850);
+        loadScene("/com/example/giga67/view/login.fxml", "MasterParts - Вход", 600, 800);
     }
 
 

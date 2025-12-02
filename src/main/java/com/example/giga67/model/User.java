@@ -23,7 +23,6 @@ public class User {
         return name;
     }
 
-    // 🔥 Добавьте этот метод
     public void setName(String name) {
         this.name = name;
     }

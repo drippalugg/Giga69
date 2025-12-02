@@ -18,7 +18,7 @@ public class ProfileController {
     public void initialize() {
         authService = SupabaseAuthService.getInstance();
         loadUserData();
-        System.out.println("✅ ProfileController initialized!");
+        System.out.println("ProfileController initialized!");
     }
 
     private void loadUserData() {
@@ -31,7 +31,7 @@ public class ProfileController {
             if (emailField != null) {
                 emailField.setText(user.getEmail());
             }
-            System.out.println("📋 Загружены данные пользователя: " + user.getName());
+            System.out.println("Загружены данные пользователя: " + user.getName());
         } else {
             if (nameField != null) {
                 nameField.setText("Гость");
@@ -40,7 +40,7 @@ public class ProfileController {
             if (emailField != null) {
                 emailField.setText("Не авторизован");
             }
-            System.out.println("⚠️ Пользователь не авторизован");
+            System.out.println("Пользователь не авторизован");
         }
     }
 
@@ -49,30 +49,28 @@ public class ProfileController {
         User user = authService.getCurrentUser();
 
         if (user == null) {
-            showMessage("⚠️ Вы не авторизованы", false);
+            showMessage("Вы не авторизованы", false);
             return;
         }
 
         String newName = nameField.getText().trim();
 
         if (newName.isEmpty()) {
-            showMessage("⚠️ Имя не может быть пустым", false);
+            showMessage("Имя не может быть пустым", false);
             return;
         }
 
         // Обновляем имя пользователя
         user.setName(newName);
 
-        System.out.println("💾 Имя обновлено: " + newName);
-        showMessage("✅ Изменения сохранены успешно!", true);
+        System.out.println("Имя обновлено: " + newName);
+        showMessage("Изменения сохранены успешно!", true);
 
-        // TODO: Отправить обновление на сервер Supabase
-        // updateUserOnServer(user);
     }
 
     @FXML
     private void handleLogout() {
-        System.out.println("👋 Выход из системы");
+        System.out.println("Выход из системы");
         authService.logout();
         SceneNavigator.goToLogin();
     }

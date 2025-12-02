@@ -13,7 +13,6 @@ public class Category {
         this.icon = icon;
     }
 
-    // Геттеры и сеттеры
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 

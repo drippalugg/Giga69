@@ -29,7 +29,7 @@ public class CategoryController {
     public void initialize() {
         partsService = new PartsService();
         cartManager = CartManager.getInstance();
-        System.out.println("✅ CategoryController initialized!");
+        System.out.println("CategoryController initialized!");
     }
 
     public void setCategory(Category category) {
@@ -42,21 +42,21 @@ public class CategoryController {
 
     public void setSearchQuery(String query) {
         if (titleLabel != null) {
-            titleLabel.setText("🔍 Результаты поиска: " + query);
+            titleLabel.setText("Результаты поиска: " + query);
         }
         loadProducts(partsService.searchParts(query));
     }
 
     private void loadProducts(ObservableList<Part> products) {
         if (productsPane == null) {
-            System.err.println("❌ productsPane is null!");
+            System.err.println("productsPane is null!");
             return;
         }
 
         productsPane.getChildren().clear();
 
         if (products.isEmpty()) {
-            Label noProducts = new Label("📦 Товары не найдены");
+            Label noProducts = new Label("Товары не найдены");
             noProducts.getStyleClass().add("empty-message");
             productsPane.getChildren().add(noProducts);
             return;
@@ -67,7 +67,7 @@ public class CategoryController {
             productsPane.getChildren().add(productCard);
         }
 
-        System.out.println("✅ Загружено товаров: " + products.size());
+        System.out.println("Загружено товаров: " + products.size());
     }
 
     private VBox createProductCard(Part part) {
@@ -181,7 +181,7 @@ public class CategoryController {
 
     private void addToCart(Part part) {
         cartManager.addToCart(part, 1);
-        System.out.println("🛒 Добавлено в корзину: " + part.getName());
+        System.out.println("Добавлено в корзину: " + part.getName());
     }
 
     private void toggleFavorite(Part part, Button button) {
@@ -195,7 +195,7 @@ public class CategoryController {
     }
 
     private void openProduct(Part part) {
-        System.out.println("📦 Открытие товара: " + part.getName());
+        System.out.println("Открытие товара: " + part.getName());
         SceneNavigator.goToProduct(part);
     }
 
@@ -207,7 +207,7 @@ public class CategoryController {
 
     @FXML
     private void openCart() {
-        System.out.println("🛒 Переход в корзину");
+        System.out.println("Переход в корзину");
         SceneNavigator.goToCart();
     }
 }

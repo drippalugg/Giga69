@@ -41,7 +41,7 @@ public class CartController {
         loadCart();
         updateTotal();
 
-        System.out.println("CartController инициализирован");
+        System.out.println("CartController initialized!");
     }
 
     private void setupCartListView() {
@@ -117,7 +117,7 @@ public class CartController {
             if (newVal != null && newVal > 0) {
                 cartManager.updateQuantity(part, newVal);
                 updateTotal();
-                System.out.println("Обновлено количество: " + part.getName() + " → " + newVal);
+                System.out.println("🔄 Обновлено количество: " + part.getName() + " → " + newVal);
             }
         });
 
@@ -136,7 +136,7 @@ public class CartController {
 
         totalBox.getChildren().add(totalPriceLabel);
 
-        Button removeBtn = new Button("🗑");
+        Button removeBtn = new Button("🗑️");
         removeBtn.setStyle(
                 "-fx-background-color: #FFE5E5; " +
                         "-fx-text-fill: #FF4757; " +
@@ -176,7 +176,7 @@ public class CartController {
             cartManager.removeItem(part.getId());
             loadCart();
             updateTotal();
-            System.out.println("🗑 Товар удалён: " + part.getName());
+            System.out.println("🗑️ Товар удалён: " + part.getName());
         });
 
         mainBox.getChildren().addAll(iconLabel, infoBox, spacer, quantityBox, totalBox, removeBtn);
@@ -190,9 +190,9 @@ public class CartController {
         cartListView.getItems().clear();
 
         if (items.isEmpty()) {
-            // Показываем центрированное сообщение
+            // 🔥 Показываем центрированное сообщение
             if (emptyLabel != null) {
-                emptyLabel.setText("Корзина пуста");
+                emptyLabel.setText("🛒 Корзина пуста");
                 emptyLabel.setStyle(
                         "-fx-font-size: 24px; " +
                                 "-fx-font-weight: bold; " +
@@ -221,7 +221,7 @@ public class CartController {
 
         for (int i = 0; i < items.size(); i++) {
             CartItem item = items.get(i);
-            double price = (double) item.getPart().getPrice();
+            double price = item.getPart().getPrice();
             int quantity = item.getQuantity();
             total += (price * quantity);
         }

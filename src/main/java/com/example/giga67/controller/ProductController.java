@@ -38,7 +38,7 @@ public class ProductController {
             quantitySpinner.setValueFactory(valueFactory);
         }
 
-        System.out.println("✅ ProductController initialized!");
+        System.out.println("ProductController initialized!");
     }
 
     public void setProduct(Part part) {
@@ -48,7 +48,7 @@ public class ProductController {
 
     private void displayProduct() {
         if (currentPart == null) {
-            System.err.println("❌ currentPart is null!");
+            System.err.println("currentPart is null!");
             return;
         }
 
@@ -105,12 +105,11 @@ public class ProductController {
                     Image image = new Image(imageUrl, true);
                     productImageView.setImage(image);
                 } catch (Exception e) {
-                    System.err.println("⚠️ Ошибка загрузки изображения: " + e.getMessage());
+                    System.err.println("⚠Ошибка загрузки изображения: " + e.getMessage());
                 }
             }
         }
 
-        // 🔥 ИСПРАВЛЕНО: Отображение характеристик как строки
         if (specificationsLabel != null) {
             String specs = currentPart.getSpecifications();
             if (specs != null && !specs.isEmpty()) {
@@ -139,7 +138,7 @@ public class ProductController {
     @FXML
     private void addToCart() {
         if (currentPart == null) {
-            System.err.println("❌ Cannot add to cart: currentPart is null");
+            System.err.println("Cannot add to cart: currentPart is null");
             return;
         }
 
@@ -149,23 +148,23 @@ public class ProductController {
         }
 
         cartManager.addToCart(currentPart, quantity);
-        System.out.println("🛒 Добавлено в корзину: " + currentPart.getName() + " x" + quantity);
+        System.out.println("Добавлено в корзину: " + currentPart.getName() + " x" + quantity);
         SceneNavigator.goToCart();
     }
 
     @FXML
     private void toggleFavorite() {
         if (currentPart == null) {
-            System.err.println("❌ Cannot toggle favorite: currentPart is null");
+            System.err.println("Cannot toggle favorite: currentPart is null");
             return;
         }
 
         if (cartManager.isFavorite(currentPart)) {
             cartManager.removeFromFavorites(currentPart);
-            System.out.println("💔 Удалено из избранного: " + currentPart.getName());
+            System.out.println("Удалено из избранного: " + currentPart.getName());
         } else {
             cartManager.addToFavorites(currentPart);
-            System.out.println("💖 Добавлено в избранное: " + currentPart.getName());
+            System.out.println("Добавлено в избранное: " + currentPart.getName());
         }
 
         updateFavoriteButton();

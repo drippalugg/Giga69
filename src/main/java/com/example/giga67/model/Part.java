@@ -9,8 +9,8 @@ public class Part {
     private double oldPrice;
     private int categoryId;
     private String description;
-    private String imageUrl;        // 🔥 Для изображения товара
-    private String specifications;   // 🔥 Для характеристик товара
+    private String imageUrl;
+    private String specifications;
 
     // Конструктор с 7 параметрами
     public Part(int id, String name, String article, String brand, double price, double oldPrice, int categoryId) {
@@ -56,17 +56,14 @@ public class Part {
         return description;
     }
 
-    // 🔥 НОВЫЙ ГЕТТЕР
     public String getImageUrl() {
         return imageUrl;
     }
 
-    // 🔥 НОВЫЙ ГЕТТЕР
     public String getSpecifications() {
         return specifications;
     }
 
-    // Сеттеры
     public void setDescription(String description) {
         this.description = description;
     }
@@ -75,17 +72,14 @@ public class Part {
         this.oldPrice = oldPrice;
     }
 
-    // 🔥 НОВЫЙ СЕТТЕР
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
 
-    // 🔥 НОВЫЙ СЕТТЕР
     public void setSpecifications(String specifications) {
         this.specifications = specifications;
     }
 
-    // Методы для работы со скидками
     public boolean hasDiscount() {
         return oldPrice > 0 && oldPrice > price;
     }

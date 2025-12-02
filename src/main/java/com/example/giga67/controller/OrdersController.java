@@ -11,10 +11,8 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 import java.util.List;
@@ -34,7 +32,7 @@ public class OrdersController {
         setupOrdersListView();
         loadOrders();
 
-        System.out.println("✅ OrdersController initialized!");
+        System.out.println("OrdersController initialized!");
     }
 
     private void setupOrdersListView() {
@@ -58,7 +56,6 @@ public class OrdersController {
         });
     }
 
-    // 🔥 Создание визуального представления заказа
     private VBox createOrderView(Order order) {
         VBox container = new VBox(0);
 
@@ -153,7 +150,6 @@ public class OrdersController {
         return container;
     }
 
-    // 🔥 Цвета для статусов
     private String getStatusColor(String status) {
         switch (status) {
             case "pending":
@@ -172,12 +168,12 @@ public class OrdersController {
     }
 
     private void loadOrders() {
-        System.out.println("📦 Загрузка заказов...");
+        System.out.println("Загрузка заказов...");
 
         if (!authService.isLoggedIn()) {
-            System.out.println("⚠️ Пользователь не авторизован");
+            System.out.println("Пользователь не авторизован");
             if (emptyLabel != null) {
-                emptyLabel.setText("🔐 Войдите в систему\nдля просмотра заказов");
+                emptyLabel.setText("Войдите в систему\nдля просмотра заказов");
                 emptyLabel.setStyle(
                         "-fx-font-size: 24px; " +
                                 "-fx-font-weight: bold; " +
@@ -203,7 +199,7 @@ public class OrdersController {
 
             if (orders.isEmpty()) {
                 if (emptyLabel != null) {
-                    emptyLabel.setText("📦 Заказов нет");
+                    emptyLabel.setText("Заказов нет");
                     emptyLabel.setStyle(
                             "-fx-font-size: 24px; " +
                                     "-fx-font-weight: bold; " +
@@ -222,7 +218,7 @@ public class OrdersController {
             }
         }
 
-        System.out.println("✅ Загружено заказов: " + orders.size());
+        System.out.println("Загружено заказов: " + orders.size());
     }
 
     @FXML

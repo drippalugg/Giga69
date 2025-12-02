@@ -15,13 +15,14 @@ public class MainApp extends Application {
     @Override
     public void start(Stage stage) {
         try {
+
             primaryStage = stage;
             primaryStage.setTitle("MasterParts - Энгельс");
-            primaryStage.setWidth(1280);
-            primaryStage.setHeight(920);
+            primaryStage.setWidth(600);
+            primaryStage.setHeight(800);
 
-            // Загружаем главное окно (НЕ login!)
-            String fxmlPath = "/com/example/giga67/view/main.fxml";
+
+            String fxmlPath = "/com/example/giga67/view/login.fxml";
             System.out.println("🔍 Загрузка main.fxml: " + fxmlPath);
 
             URL fxmlUrl = getClass().getResource(fxmlPath);
@@ -64,6 +65,4 @@ public class MainApp extends Application {
     public static Stage getPrimaryStage() {
         return primaryStage;
     }
-
-
 }

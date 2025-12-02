@@ -2,6 +2,7 @@ package com.example.giga67.service;
 
 import com.example.giga67.model.CartItem;
 import com.example.giga67.model.Part;
+import com.example.giga67.model.User;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -17,270 +18,302 @@ public class CartManager {
     private ObservableList<CartItem> cartItems;
     private ObservableList<Part> favorites;
     private SupabaseClient client;
+    private SupabaseAuthService authService;
+    private PartsService partsService;
     private Gson gson;
 
     private CartManager() {
+        this.client = SupabaseClient.getInstance();
+        this.authService = SupabaseAuthService.getInstance();
+        this.partsService = new PartsService();
+        this.gson = new Gson();
         this.cartItems = FXCollections.observableArrayList();
         this.favorites = FXCollections.observableArrayList();
-        this.client = SupabaseClient.getInstance();
-        this.gson = new Gson();
-        System.out.println("🛒 CartManager initialized");
+
+        // 🔥 НЕ ЗАГРУЖАЕМ ЗДЕСЬ! Загрузим после входа
     }
 
-    public static synchronized CartManager getInstance() {
+    public static CartManager getInstance() {
         if (instance == null) {
             instance = new CartManager();
         }
         return instance;
     }
 
-    // 🔥 НОВЫЙ МЕТОД - загрузка корзины из Supabase
-    public void loadCartFromServer(String userId, String accessToken) {
-        try {
-            System.out.println("📥 Загрузка корзины из Supabase...");
+    // ==================== ЗАГРУЗКА ИЗ SUPABASE ====================
 
-            HttpResponse<String> response = client.get(
-                    "/rest/v1/cart?user_id=eq." + userId,
-                    accessToken
-            );
+    public void loadData() {
+        User user = authService.getCurrentUser();
 
-            if (response.statusCode() == 200) {
-                cartItems.clear();
-                JsonArray jsonArray = gson.fromJson(response.body(), JsonArray.class);
-
-                // Здесь нужно загрузить полные данные о товарах из таблицы parts
-                // Пока просто логируем
-                System.out.println("✅ Загружено элементов корзины: " + jsonArray.size());
-            }
-        } catch (Exception e) {
-            System.err.println("❌ Ошибка загрузки корзины: " + e.getMessage());
-        }
-    }
-
-    // 🔥 НОВЫЙ МЕТОД - загрузка избранного из Supabase
-    public void loadFavoritesFromServer(String userId, String accessToken) {
-        try {
-            System.out.println("📥 Загрузка избранного из Supabase...");
-
-            HttpResponse<String> response = client.get(
-                    "/rest/v1/favorites?user_id=eq." + userId,
-                    accessToken
-            );
-
-            if (response.statusCode() == 200) {
-                favorites.clear();
-                JsonArray jsonArray = gson.fromJson(response.body(), JsonArray.class);
-
-                System.out.println("✅ Загружено избранных товаров: " + jsonArray.size());
-            }
-        } catch (Exception e) {
-            System.err.println("❌ Ошибка загрузки избранного: " + e.getMessage());
-        }
-    }
-
-    // ============ МЕТОДЫ КОРЗИНЫ ============
-
-    public void addToCart(Part part, int quantity) {
-        for (int i = 0; i < cartItems.size(); i++) {
-            CartItem item = cartItems.get(i);
-            if (item.getPart().getId() == part.getId()) {
-                item.setQuantity(item.getQuantity() + quantity);
-                System.out.println("🛒 Обновлено количество: " + part.getName() + " x" + item.getQuantity());
-
-                // 🔥 Синхронизация с Supabase
-                syncCartToServer();
-                return;
-            }
-        }
-        cartItems.add(new CartItem(part, quantity));
-        System.out.println("🛒 Добавлено в корзину: " + part.getName() + " x" + quantity);
-
-        // 🔥 Синхронизация с Supabase
-        syncCartToServer();
-    }
-
-    public void removeFromCart(Part part) {
-        for (int i = cartItems.size() - 1; i >= 0; i--) {
-            CartItem item = cartItems.get(i);
-            if (item.getPart().getId() == part.getId()) {
-                cartItems.remove(i);
-                System.out.println("🗑️ Удалено из корзины: " + part.getName());
-
-                // 🔥 Синхронизация с Supabase
-                syncCartToServer();
-                break;
-            }
-        }
-    }
-
-    public void removeItem(int partId) {
-        for (int i = cartItems.size() - 1; i >= 0; i--) {
-            CartItem item = cartItems.get(i);
-            if (item.getPart().getId() == partId) {
-                cartItems.remove(i);
-                System.out.println("🗑️ Удалено из корзины товар с ID: " + partId);
-
-                // 🔥 Синхронизация с Supabase
-                syncCartToServer();
-                break;
-            }
-        }
-    }
-
-    public void updateQuantity(Part part, int quantity) {
-        if (quantity <= 0) {
-            removeFromCart(part);
+        if (user == null) {
+            System.out.println("⚠️ Пользователь не авторизован, очищаем данные");
+            cartItems.clear();
+            favorites.clear();
             return;
         }
 
-        for (int i = 0; i < cartItems.size(); i++) {
-            CartItem item = cartItems.get(i);
-            if (item.getPart().getId() == part.getId()) {
-                item.setQuantity(quantity);
-                System.out.println("🔄 Обновлено количество: " + part.getName() + " -> " + quantity);
+        System.out.println("📡 Загрузка данных для пользователя: " + user.getEmail());
+        loadCartFromSupabase(user.getId());
+        loadFavoritesFromSupabase(user.getId());
+    }
 
-                //  Синхронизация с Supabase
-                syncCartToServer();
+    private void loadCartFromSupabase(String userId) {
+        try {
+            String endpoint = "/rest/v1/cart?user_id=eq." + userId + "&select=*";
+            HttpResponse<String> response = client.get(endpoint);
+
+            if (response.statusCode() == 200) {
+                JsonArray jsonArray = gson.fromJson(response.body(), JsonArray.class);
+                cartItems.clear();
+
+                for (int i = 0; i < jsonArray.size(); i++) {
+                    JsonObject item = jsonArray.get(i).getAsJsonObject();
+                    int partId = item.get("part_id").getAsInt();
+                    int quantity = item.get("quantity").getAsInt();
+
+                    Part part = partsService.getPartById(partId);
+                    if (part != null) {
+                        cartItems.add(new CartItem(part, quantity));
+                    }
+                }
+
+                System.out.println("✅ Корзина загружена из Supabase (" + cartItems.size() + " товаров)");
+            }
+        } catch (Exception e) {
+            System.err.println("❌ Ошибка загрузки корзины: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void loadFavoritesFromSupabase(String userId) {
+        try {
+            String endpoint = "/rest/v1/favorites?user_id=eq." + userId + "&select=*";
+            HttpResponse<String> response = client.get(endpoint);
+
+            if (response.statusCode() == 200) {
+                JsonArray jsonArray = gson.fromJson(response.body(), JsonArray.class);
+                favorites.clear();
+
+                for (int i = 0; i < jsonArray.size(); i++) {
+                    JsonObject item = jsonArray.get(i).getAsJsonObject();
+                    int partId = item.get("part_id").getAsInt();
+
+                    Part part = partsService.getPartById(partId);
+                    if (part != null) {
+                        favorites.add(part);
+                    }
+                }
+
+                System.out.println("✅ Избранное загружено из Supabase (" + favorites.size() + " товаров)");
+            }
+        } catch (Exception e) {
+            System.err.println("❌ Ошибка загрузки избранного: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    // ==================== КОРЗИНА ====================
+
+    public void addToCart(Part part, int quantity) {
+        User user = authService.getCurrentUser();
+
+        if (user == null) {
+            System.out.println("⚠️ Войдите, чтобы добавить в корзину");
+            return;
+        }
+
+        // Обновляем локально
+        for (CartItem item : cartItems) {
+            if (item.getPart().getId() == part.getId()) {
+                item.setQuantity(item.getQuantity() + quantity);
+                updateCartInSupabase(user.getId(), part.getId(), item.getQuantity());
+                System.out.println("🛒 Обновлено количество: " + part.getName() + " → " + item.getQuantity());
+                return;
+            }
+        }
+
+        // Добавляем новый товар
+        cartItems.add(new CartItem(part, quantity));
+        addCartToSupabase(user.getId(), part.getId(), quantity);
+        System.out.println("🛒 Товар добавлен в корзину: " + part.getName() + " x" + quantity);
+    }
+
+    public void removeItem(int partId) {
+        User user = authService.getCurrentUser();
+        if (user == null) return;
+
+        cartItems.removeIf(item -> item.getPart().getId() == partId);
+        deleteCartFromSupabase(user.getId(), partId);
+        System.out.println("🗑️ Товар удалён из корзины (ID: " + partId + ")");
+    }
+
+    public void updateQuantity(Part part, int newQuantity) {
+        if (newQuantity <= 0) {
+            removeItem(part.getId());
+            return;
+        }
+
+        User user = authService.getCurrentUser();
+        if (user == null) return;
+
+        for (CartItem item : cartItems) {
+            if (item.getPart().getId() == part.getId()) {
+                item.setQuantity(newQuantity);
+                updateCartInSupabase(user.getId(), part.getId(), newQuantity);
+                System.out.println("🔄 Количество обновлено: " + part.getName() + " → " + newQuantity);
                 return;
             }
         }
     }
 
     public void clear() {
-        clearCart();
-    }
+        User user = authService.getCurrentUser();
+        if (user == null) return;
 
-    public void clearCart() {
         cartItems.clear();
+        clearCartInSupabase(user.getId());
         System.out.println("🗑️ Корзина очищена");
-
-        //  Синхронизация с Supabase
-        syncCartToServer();
-    }
-
-    //  НОВЫЙ МЕТОД - синхронизация корзины с Supabase
-    private void syncCartToServer() {
-        SupabaseAuthService authService = SupabaseAuthService.getInstance();
-        if (!authService.isLoggedIn()) {
-            System.out.println("⚠️ Пользователь не залогинен, пропускаем синхронизацию корзины");
-            return;
-        }
-
-        try {
-            String userId = authService.getCurrentUser().getId();
-            String accessToken = authService.getAccessToken();
-
-            // Удаляем всю корзину пользователя
-            client.delete("/rest/v1/cart?user_id=eq." + userId, accessToken);
-
-            // Добавляем текущие товары
-            for (CartItem item : cartItems) {
-                JsonObject cartData = new JsonObject();
-                cartData.addProperty("user_id", userId);
-                cartData.addProperty("part_id", item.getPart().getId());
-                cartData.addProperty("quantity", item.getQuantity());
-
-                client.post("/rest/v1/cart", gson.toJson(cartData), accessToken);
-            }
-
-
-        } catch (Exception e) {
-            System.err.println("❌ Ошибка синхронизации корзины: " + e.getMessage());
-        }
-    }
-
-    public double getTotal() {
-        return getTotalPrice();
-    }
-
-    public double getTotalPrice() {
-        double total = 0.0;
-        for (int i = 0; i < cartItems.size(); i++) {
-            CartItem item = cartItems.get(i);
-            Part part = item.getPart();
-            double price = (double) part.getPrice();
-            int qty = item.getQuantity();
-            total += (price * qty);
-        }
-        return total;
-    }
-
-    public int getTotalItems() {
-        int total = 0;
-        for (int i = 0; i < cartItems.size(); i++) {
-            CartItem item = cartItems.get(i);
-            total += item.getQuantity();
-        }
-        return total;
     }
 
     public List<CartItem> getItems() {
-        List<CartItem> list = new ArrayList<>();
-        for (int i = 0; i < cartItems.size(); i++) {
-            list.add(cartItems.get(i));
-        }
-        return list;
+        return new ArrayList<>(cartItems);
     }
 
     public ObservableList<CartItem> getCartItems() {
         return cartItems;
     }
 
-    // ============ МЕТОДЫ ИЗБРАННОГО ============
+    public double getTotal() {
+        double total = 0.0;
+        for (CartItem item : cartItems) {
+            total += item.getPart().getPrice() * item.getQuantity();
+        }
+        return total;
+    }
+
+    public int getTotalItems() {
+        int total = 0;
+        for (CartItem item : cartItems) {
+            total += item.getQuantity();
+        }
+        return total;
+    }
+
+    // ==================== ИЗБРАННОЕ ====================
 
     public void addToFavorites(Part part) {
-        if (!favorites.contains(part)) {
-            favorites.add(part);
-            System.out.println("💖 Добавлено в избранное: " + part.getName());
+        User user = authService.getCurrentUser();
 
-            // Синхронизация с Supabase
-            syncFavoritesToServer();
+        if (user == null) {
+            System.out.println("⚠️ Войдите, чтобы добавить в избранное");
+            return;
+        }
+
+        if (!isFavorite(part)) {
+            favorites.add(part);
+            addFavoriteToSupabase(user.getId(), part.getId());
+            System.out.println("💖 Товар добавлен в избранное: " + part.getName());
         }
     }
 
     public void removeFromFavorites(Part part) {
-        favorites.remove(part);
-        System.out.println("💔 Удалено из избранного: " + part.getName());
+        User user = authService.getCurrentUser();
+        if (user == null) return;
 
-        // 🔥 Синхронизация с Supabase
-        syncFavoritesToServer();
-    }
-
-    // 🔥 НОВЫЙ МЕТОД - синхронизация избранного с Supabase
-    private void syncFavoritesToServer() {
-        SupabaseAuthService authService = SupabaseAuthService.getInstance();
-        if (!authService.isLoggedIn()) {
-            System.out.println("⚠️ Пользователь не залогинен, пропускаем синхронизацию избранного");
-            return;
-        }
-
-        try {
-            String userId = authService.getCurrentUser().getId();
-            String accessToken = authService.getAccessToken();
-
-            // Удаляем всё избранное пользователя
-            client.delete("/rest/v1/favorites?user_id=eq." + userId, accessToken);
-
-            // Добавляем текущие товары
-            for (Part part : favorites) {
-                JsonObject favData = new JsonObject();
-                favData.addProperty("user_id", userId);
-                favData.addProperty("part_id", part.getId());
-
-                client.post("/rest/v1/favorites", gson.toJson(favData), accessToken);
-            }
-
-            System.out.println("✅ Избранное синхронизировано с сервером");
-        } catch (Exception e) {
-            System.err.println("❌ Ошибка синхронизации избранного: " + e.getMessage());
-        }
+        favorites.removeIf(p -> p.getId() == part.getId());
+        deleteFavoriteFromSupabase(user.getId(), part.getId());
+        System.out.println("💔 Товар удалён из избранного: " + part.getName());
     }
 
     public boolean isFavorite(Part part) {
-        return favorites.contains(part);
+        return favorites.stream().anyMatch(p -> p.getId() == part.getId());
     }
 
     public ObservableList<Part> getFavorites() {
         return favorites;
+    }
+
+    // ==================== SUPABASE ОПЕРАЦИИ ====================
+
+    private void addCartToSupabase(String userId, int partId, int quantity) {
+        try {
+            String json = String.format(
+                    "{\"user_id\":\"%s\",\"part_id\":%d,\"quantity\":%d}",
+                    userId, partId, quantity
+            );
+            HttpResponse<String> response = client.post("/rest/v1/cart", json);
+            System.out.println("💾 Товар добавлен в корзину (Supabase) - статус: " + response.statusCode());
+        } catch (Exception e) {
+            System.err.println("❌ Ошибка добавления в корзину: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void updateCartInSupabase(String userId, int partId, int quantity) {
+        try {
+            String json = String.format("{\"quantity\":%d}", quantity);
+            String endpoint = String.format(
+                    "/rest/v1/cart?user_id=eq.%s&part_id=eq.%d",
+                    userId, partId
+            );
+            HttpResponse<String> response = client.patch(endpoint, json);
+            System.out.println("💾 Количество обновлено (Supabase) - статус: " + response.statusCode());
+        } catch (Exception e) {
+            System.err.println("❌ Ошибка обновления корзины: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void deleteCartFromSupabase(String userId, int partId) {
+        try {
+            String endpoint = String.format(
+                    "/rest/v1/cart?user_id=eq.%s&part_id=eq.%d",
+                    userId, partId
+            );
+            HttpResponse<String> response = client.delete(endpoint);
+            System.out.println("🗑️ Товар удалён из корзины (Supabase) - статус: " + response.statusCode());
+        } catch (Exception e) {
+            System.err.println("❌ Ошибка удаления из корзины: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void clearCartInSupabase(String userId) {
+        try {
+            String endpoint = "/rest/v1/cart?user_id=eq." + userId;
+            HttpResponse<String> response = client.delete(endpoint);
+            System.out.println("🗑️ Корзина очищена (Supabase) - статус: " + response.statusCode());
+        } catch (Exception e) {
+            System.err.println("❌ Ошибка очистки корзины: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void addFavoriteToSupabase(String userId, int partId) {
+        try {
+            String json = String.format(
+                    "{\"user_id\":\"%s\",\"part_id\":%d}",
+                    userId, partId
+            );
+            HttpResponse<String> response = client.post("/rest/v1/favorites", json);
+            System.out.println("💖 Товар добавлен в избранное (Supabase) - статус: " + response.statusCode());
+        } catch (Exception e) {
+            System.err.println("❌ Ошибка добавления в избранное: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void deleteFavoriteFromSupabase(String userId, int partId) {
+        try {
+            String endpoint = String.format(
+                    "/rest/v1/favorites?user_id=eq.%s&part_id=eq.%d",
+                    userId, partId
+            );
+            HttpResponse<String> response = client.delete(endpoint);
+            System.out.println("💔 Товар удалён из избранного (Supabase) - статус: " + response.statusCode());
+        } catch (Exception e) {
+            System.err.println("❌ Ошибка удаления из избранного: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

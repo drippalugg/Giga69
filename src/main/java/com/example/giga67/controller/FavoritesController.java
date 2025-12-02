@@ -23,12 +23,12 @@ public class FavoritesController {
     public void initialize() {
         cartManager = CartManager.getInstance();
         loadFavorites();
-        System.out.println("✅ FavoritesController initialized!");
+        System.out.println("FavoritesController initialized!");
     }
 
     private void loadFavorites() {
         if (productsPane == null) {
-            System.err.println("❌ productsPane is null!");
+            System.err.println("productsPane is null!");
             return;
         }
 
@@ -49,7 +49,7 @@ public class FavoritesController {
             if (favoritesScrollPane != null) {
                 favoritesScrollPane.setVisible(false);
             }
-            System.out.println("💔 Избранное пусто");
+            System.out.println("Избранное пусто");
             return;
         }
 
@@ -66,7 +66,7 @@ public class FavoritesController {
             productsPane.getChildren().add(productCard);
         }
 
-        System.out.println("💖 Загружено избранных товаров: " + cartManager.getFavorites().size());
+        System.out.println("Загружено избранных товаров: " + cartManager.getFavorites().size());
     }
 
     private VBox createProductCard(Part part) {
@@ -124,14 +124,14 @@ public class FavoritesController {
             System.out.println("🛒 Добавлено в корзину: " + part.getName());
         });
 
-        // Кнопка "Удалить из избранного"
+
         Button removeBtn = new Button("💔 Удалить");
         removeBtn.getStyleClass().add("danger-button");
         removeBtn.setMaxWidth(Double.MAX_VALUE);
         removeBtn.setOnAction(e -> {
             cartManager.removeFromFavorites(part);
             loadFavorites();
-            System.out.println("💔 Удалено из избранного: " + part.getName());
+            System.out.println("Удалено из избранного: " + part.getName());
         });
 
         card.setOnMouseClicked(e -> {

@@ -5,20 +5,18 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class Order {
-    private String id;  // 🔥 Изменено с int на String
+    private String id;
     private String userId;
     private LocalDateTime createdAt;
     private String status;
-    private double totalPrice;  // 🔥 Переименовано с totalAmount
-    private List<CartItem> items;  // 🔥 Добавлена типизация
-
+    private double totalPrice;
+    private List<CartItem> items;
     // Пустой конструктор
     public Order() {
         this.createdAt = LocalDateTime.now();
         this.status = "pending";
     }
 
-    // 🔥 НОВЫЙ конструктор с параметрами
     public Order(String id, String userId, List<CartItem> items, double totalPrice, LocalDateTime createdAt, String status) {
         this.id = id;
         this.userId = userId;
@@ -28,7 +26,6 @@ public class Order {
         this.status = status;
     }
 
-    // Геттеры и сеттеры
     public String getId() {
         return id;
     }
@@ -77,7 +74,6 @@ public class Order {
         this.items = items;
     }
 
-    // 🔥 Дополнительные методы
     public String getFormattedDate() {
         if (createdAt != null) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");

@@ -24,7 +24,7 @@ public class MainController {
 
     @FXML
     public void initialize() {
-        System.out.println("✅ MainController initialized!");
+        System.out.println("MainController initialized!");
 
         partsService = new PartsService();
         authService = SupabaseAuthService.getInstance();
@@ -36,25 +36,25 @@ public class MainController {
         loadCategories();
         updateLoginButton();
 
-        System.out.println("📦 Loaded " + partsService.getCategories().size() + " categories");
-        System.out.println("🛍️ Loaded " + partsService.getParts().size() + " products");
+        System.out.println("Loaded " + partsService.getCategories().size() + " categories");
+        System.out.println("Loaded " + partsService.getParts().size() + " products");
     }
 
     private void updateLoginButton() {
         if (loginButton != null) {
             if (authService.isLoggedIn()) {
                 loginButton.setText("👤 " + authService.getCurrentUser().getName());
-                System.out.println("✅ Пользователь залогинен: " + authService.getCurrentUser().getEmail());
+                System.out.println("Пользователь залогинен: " + authService.getCurrentUser().getEmail());
             } else {
                 loginButton.setText("👤 Войти");
-                System.out.println("⚠️ Пользователь не залогинен");
+                System.out.println("⚠Пользователь не залогинен");
             }
         }
     }
 
     private void loadCategories() {
         if (categoriesPane == null) {
-            System.err.println("❌ categoriesPane is null!");
+            System.err.println("categoriesPane is null!");
             return;
         }
 
@@ -99,47 +99,47 @@ public class MainController {
     @FXML
     private void handleSearch() {
         if (searchField == null) {
-            System.err.println("❌ searchField is null!");
+            System.err.println("searchField is null!");
             return;
         }
 
         String query = searchField.getText().trim();
         if (!query.isEmpty()) {
-            System.out.println("🔍 Поиск: " + query);
+            System.out.println("Поиск: " + query);
             SceneNavigator.goToSearch(query);
         }
     }
 
     @FXML
     private void handleOrders() {
-        System.out.println("📦 Заказы clicked");
+        System.out.println("Заказы clicked");
         SceneNavigator.goToOrders();
     }
 
     @FXML
     private void handleFavorites() {
-        System.out.println("💖 Избранное clicked");
+        System.out.println("Избранное clicked");
         SceneNavigator.goToFavorites();
     }
 
     @FXML
     private void handleCart() {
-        System.out.println("🛒 Корзина clicked");
+        System.out.println("Корзина clicked");
         SceneNavigator.goToCart();
     }
 
     @FXML
     private void handleLogin() {
-        System.out.println("👤 Войти clicked");
-        System.out.println("🔍 Текущий статус: isLoggedIn = " + authService.isLoggedIn());
+        System.out.println("Войти clicked");
+        System.out.println("Текущий статус: isLoggedIn = " + authService.isLoggedIn());
 
         if (authService.isLoggedIn()) {
             // Если пользователь залогинен - идём в профиль
-            System.out.println("✅ Переход в профиль");
+            System.out.println("Переход в профиль");
             SceneNavigator.goToProfile();
         } else {
             // Если не залогинен - идём на экран входа
-            System.out.println("⚠️ Переход на экран входа");
+            System.out.println("⚠Переход на экран входа");
             SceneNavigator.goToLogin();
         }
     }
