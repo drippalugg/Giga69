@@ -40,7 +40,6 @@ public class ProfileController {
             if (emailField != null) {
                 emailField.setText("Не авторизован");
             }
-            System.out.println("Пользователь не авторизован");
         }
     }
 
@@ -59,25 +58,19 @@ public class ProfileController {
             showMessage("Имя не может быть пустым", false);
             return;
         }
-
-        // Обновляем имя пользователя
         user.setName(newName);
-
-        System.out.println("Имя обновлено: " + newName);
         showMessage("Изменения сохранены успешно!", true);
 
     }
 
     @FXML
     private void handleLogout() {
-        System.out.println("Выход из системы");
         authService.logout();
         SceneNavigator.goToLogin();
     }
 
     @FXML
     private void goBack() {
-        System.out.println("← Возврат на главную");
         SceneNavigator.goToMain();
     }
 

@@ -10,7 +10,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.Priority;
+
 
 public class FavoritesController {
     @FXML private FlowPane productsPane;
@@ -35,7 +41,7 @@ public class FavoritesController {
         productsPane.getChildren().clear();
 
         if (cartManager.getFavorites().isEmpty()) {
-            // Показываем центрированное сообщение
+// Показываем центрированное сообщение
             if (emptyLabel != null) {
                 emptyLabel.setText("Избранное пусто");
                 emptyLabel.setStyle(
@@ -53,7 +59,7 @@ public class FavoritesController {
             return;
         }
 
-        // Скрываем сообщение, показываем товары
+// Скрываем сообщение, показываем товары
         if (emptyLabel != null) {
             emptyLabel.setVisible(false);
         }
@@ -75,94 +81,139 @@ public class FavoritesController {
         card.setPrefSize(280, 380);
         card.getStyleClass().add("product-card");
         card.setPadding(new Insets(20));
-        card.setStyle(
-                "-fx-background-color: white; " +
-                        "-fx-background-radius: 16; " +
-                        "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2); " +
-                        "-fx-cursor: hand;"
-        );
 
-        // Иконка товара
-        Label iconLabel = new Label("🎁");
-        iconLabel.setStyle("-fx-font-size: 80px;");
 
-        // Название
+        ImageView imageView = new ImageView();
+        imageView.setFitWidth(120);
+        imageView.setFitHeight(120);
+        imageView.setPreserveRatio(true);
+
+        String imageUrl = part.getImageUrl();
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            try {
+                imageView.setImage(new Image(imageUrl, 120, 120, true, true));
+                card.getChildren().add(imageView);           // добавляем КАРТИНКУ
+            } catch (Exception e) {
+                System.err.println("Ошибка изображения в избранном: " + e.getMessage());
+                Label iconLabel = new Label("🎁");
+                iconLabel.setStyle("-fx-font-size: 80px;");
+                card.getChildren().add(iconLabel);           // если ошибка – показываем ПОДАРОК
+            }
+        } else {
+            Label iconLabel = new Label("🎁");
+            iconLabel.setStyle("-fx-font-size: 80px;");
+            card.getChildren().add(iconLabel);               // нет url – показываем ПОДАРОК
+        }
+
+
+// Название
         Label nameLabel = new Label(part.getName());
         nameLabel.getStyleClass().add("product-name");
         nameLabel.setStyle(
-                "-fx-font-size: 16px; " +
-                        "-fx-font-weight: bold; " +
-                        "-fx-text-fill: #1A1A1A; " +
-                        "-fx-wrap-text: true; " +
+                "-fx-font-size: 16px;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-text-fill: #1A1A1A;" +
+                        "-fx-wrap-text: true;" +
                         "-fx-text-alignment: center;"
         );
         nameLabel.setMaxWidth(240);
         nameLabel.setWrapText(true);
 
-        // Артикул
+// Артикул
         Label articleLabel = new Label("Арт: " + part.getArticle());
         articleLabel.setStyle(
-                "-fx-font-size: 13px; " +
+                "-fx-font-size: 13px;" +
                         "-fx-text-fill: #666;"
         );
 
-        // Цена
-        Label priceLabel = new Label(String.format("%.2f ₽", part.getPrice()));
-        priceLabel.getStyleClass().add("product-price");
-        priceLabel.setStyle(
-                "-fx-font-size: 24px; " +
-                        "-fx-font-weight: bold; " +
-                        "-fx-text-fill: #000;"
+// Бренд
+        Label brandLabel = new Label("Бренд: " + part.getBrand());
+        brandLabel.setStyle(
+                "-fx-font-size: 13px;" +
+                        "-fx-text-fill: #666;"
         );
 
-        // Кнопка "В корзину"
-        Button addToCartBtn = new Button("🛒 В корзину");
-        addToCartBtn.getStyleClass().add("primary-button");
-        addToCartBtn.setMaxWidth(Double.MAX_VALUE);
-        addToCartBtn.setOnAction(e -> {
-            cartManager.addToCart(part, 1);
-            System.out.println("🛒 Добавлено в корзину: " + part.getName());
-        });
+        Region spacer = new Region();
+        VBox.setVgrow(spacer, Priority.ALWAYS);
 
+// Цена
+        HBox priceBox = new HBox(8);
+        priceBox.setAlignment(Pos.CENTER_LEFT);
 
-        Button removeBtn = new Button("💔 Удалить");
-        removeBtn.getStyleClass().add("danger-button");
-        removeBtn.setMaxWidth(Double.MAX_VALUE);
-        removeBtn.setOnAction(e -> {
-            cartManager.removeFromFavorites(part);
-            loadFavorites();
-            System.out.println("Удалено из избранного: " + part.getName());
-        });
+        if (part.hasDiscount()) {
+            Label oldPriceLabel = new Label(String.format("%.0f ₽", part.getOldPrice()));
+            oldPriceLabel.setStyle(
+                    "-fx-font-size: 14px;" +
+                            "-fx-text-fill: #888;" +
+                            "-fx-strikethrough: true;"
+            );
 
-        card.setOnMouseClicked(e -> {
-            System.out.println("🖱️ Открытие товара: " + part.getName());
-            SceneNavigator.goToProduct(part);
-        });
+            Label priceLabel = new Label(String.format("%.0f ₽", part.getPrice()));
+            priceLabel.setStyle(
+                    "-fx-font-size: 18px;" +
+                            "-fx-font-weight: bold;" +
+                            "-fx-text-fill: #000;"
+            );
 
-        // Hover эффект
-        card.setOnMouseEntered(e ->
-                card.setStyle(
-                        "-fx-background-color: white; " +
-                                "-fx-background-radius: 16; " +
-                                "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 20, 0, 0, 6); " +
-                                "-fx-cursor: hand; " +
-                                "-fx-scale-x: 1.03; " +
-                                "-fx-scale-y: 1.03;"
-                )
+            Label discountLabel = new Label("-" + part.getDiscountPercent() + "%");
+            discountLabel.setStyle(
+                    "-fx-background-color: #FF4757;" +
+                            "-fx-text-fill: #FFF;" +
+                            "-fx-font-size: 12px;" +
+                            "-fx-font-weight: bold;" +
+                            "-fx-background-radius: 8;" +
+                            "-fx-padding: 4 10;"
+            );
+
+            priceBox.getChildren().addAll(oldPriceLabel, priceLabel, discountLabel);
+        } else {
+            Label priceLabel = new Label(String.format("%.0f ₽", part.getPrice()));
+            priceLabel.setStyle(
+                    "-fx-font-size: 18px;" +
+                            "-fx-font-weight: bold;" +
+                            "-fx-text-fill: #000;"
+            );
+            priceBox.getChildren().add(priceLabel);
+        }
+
+// Кнопки
+        HBox buttonsBox = new HBox(10);
+        buttonsBox.setAlignment(Pos.CENTER);
+
+        Button removeButton = new Button("Убрать из избранного");
+        removeButton.getStyleClass().add("secondary-button");
+        removeButton.setOnAction(e -> removeFromFavorites(part));
+
+        Button openButton = new Button("Открыть");
+        openButton.getStyleClass().add("primary-button");
+        openButton.setOnAction(e -> openProduct(part));
+
+        buttonsBox.getChildren().addAll(openButton, removeButton);
+
+// наполняем карточку
+        card.getChildren().addAll(
+                nameLabel,
+                articleLabel,
+                brandLabel,
+                spacer,
+                priceBox,
+                buttonsBox
         );
-        card.setOnMouseExited(e ->
-                card.setStyle(
-                        "-fx-background-color: white; " +
-                                "-fx-background-radius: 16; " +
-                                "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2); " +
-                                "-fx-cursor: hand;"
-                )
-        );
 
-        card.getChildren().addAll(iconLabel, nameLabel, articleLabel, priceLabel, addToCartBtn, removeBtn);
+        card.setOnMouseClicked(e -> openProduct(part));
 
         return card;
     }
+
+    private void removeFromFavorites(Part part) {
+        cartManager.removeFromFavorites(part);
+        loadFavorites();
+    }
+
+    private void openProduct(Part part) {
+        SceneNavigator.goToProduct(part);
+    }
+
 
     @FXML
     private void goBack() {

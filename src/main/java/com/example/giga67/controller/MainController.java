@@ -4,6 +4,7 @@ import com.example.giga67.model.Category;
 import com.example.giga67.service.PartsService;
 import com.example.giga67.service.SupabaseAuthService;
 import com.example.giga67.util.SceneNavigator;
+import com.example.giga67.util.AdminSceneNavigator;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -30,31 +31,99 @@ public class MainController {
         authService = SupabaseAuthService.getInstance();
 
         if (locationLabel != null) {
-            locationLabel.setText("📍 Энгельс");
+            locationLabel.setText("г.Энгельс");
         }
 
         loadCategories();
         updateLoginButton();
+        if (authService.isLoggedIn()
+                && authService.getCurrentUser() != null
+                && authService.getCurrentUser().isAdmin()) {
+            addAdminButton();
+        }
 
         System.out.println("Loaded " + partsService.getCategories().size() + " categories");
         System.out.println("Loaded " + partsService.getParts().size() + " products");
     }
 
+    private void addAdminButton() {
+        try {
+            // защита от дублей: если уже есть кнопка с таким текстом в родителе loginButton – выходим
+            if (loginButton != null && loginButton.getParent() != null) {
+                var parent = loginButton.getParent();
+
+                if (parent instanceof VBox vbox) {
+                    boolean exists = vbox.getChildren().stream()
+                            .filter(n -> n instanceof Button)
+                            .anyMatch(n -> "Администратор".equals(((Button) n).getText()));
+                    if (exists) return;
+                } else if (parent instanceof javafx.scene.layout.HBox hbox) {
+                    boolean exists = hbox.getChildren().stream()
+                            .filter(n -> n instanceof Button)
+                            .anyMatch(n -> "Администратор".equals(((Button) n).getText()));
+                    if (exists) return;
+                }
+            }
+
+            Button adminBtn = new Button("Администратор");
+            adminBtn.setStyle("-fx-font-size: 12; -fx-padding: 8 15; " +
+                    "-fx-background-color: #e74c3c; -fx-text-fill: white; " +
+                    "-fx-font-weight: bold; -fx-cursor: hand;");
+            adminBtn.setOnAction(e -> handleAdminPanel());
+
+            // способ 1: если loginButton есть – добавляем рядом с ним
+            if (loginButton != null && loginButton.getParent() != null) {
+                var parent = loginButton.getParent();
+
+                if (parent instanceof VBox vbox) {
+                    vbox.getChildren().add(adminBtn);
+                    return;
+                } else if (parent instanceof javafx.scene.layout.HBox hbox) {
+                    hbox.getChildren().add(adminBtn);
+                    return;
+                }
+            }
+
+            // способ 2: если есть categoriesPane – вставляем над ним
+            if (categoriesPane != null && categoriesPane.getParent() != null) {
+                var parent = categoriesPane.getParent();
+                if (parent instanceof VBox vbox) {
+                    int index = vbox.getChildren().indexOf(categoriesPane);
+                    if (index >= 0) {
+                        vbox.getChildren().add(index, adminBtn);
+                    } else {
+                        vbox.getChildren().add(adminBtn);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleAdminPanel() {
+        if (authService.isLoggedIn()
+                && authService.getCurrentUser() != null
+                && authService.getCurrentUser().isAdmin()) {
+            AdminSceneNavigator.goToAdminPanel();
+        } else {
+            System.out.println("Нет прав администратора");
+        }
+    }
+
     private void updateLoginButton() {
         if (loginButton != null) {
             if (authService.isLoggedIn()) {
-                loginButton.setText("👤 " + authService.getCurrentUser().getName());
-                System.out.println("Пользователь залогинен: " + authService.getCurrentUser().getEmail());
+                loginButton.setText(authService.getCurrentUser().getName());
             } else {
-                loginButton.setText("👤 Войти");
-                System.out.println("⚠Пользователь не залогинен");
+                loginButton.setText("Войти");
             }
         }
     }
 
     private void loadCategories() {
         if (categoriesPane == null) {
-            System.err.println("categoriesPane is null!");
             return;
         }
 
@@ -89,7 +158,6 @@ public class MainController {
         });
 
         card.setOnMouseClicked(e -> {
-            System.out.println("🖱️ Открытие категории: " + category.getName());
             SceneNavigator.goToCategory(category);
         });
 
@@ -99,47 +167,38 @@ public class MainController {
     @FXML
     private void handleSearch() {
         if (searchField == null) {
-            System.err.println("searchField is null!");
             return;
         }
 
         String query = searchField.getText().trim();
         if (!query.isEmpty()) {
-            System.out.println("Поиск: " + query);
             SceneNavigator.goToSearch(query);
         }
     }
 
     @FXML
     private void handleOrders() {
-        System.out.println("Заказы clicked");
         SceneNavigator.goToOrders();
     }
 
     @FXML
     private void handleFavorites() {
-        System.out.println("Избранное clicked");
         SceneNavigator.goToFavorites();
     }
 
     @FXML
     private void handleCart() {
-        System.out.println("Корзина clicked");
         SceneNavigator.goToCart();
     }
 
     @FXML
     private void handleLogin() {
-        System.out.println("Войти clicked");
-        System.out.println("Текущий статус: isLoggedIn = " + authService.isLoggedIn());
 
         if (authService.isLoggedIn()) {
             // Если пользователь залогинен - идём в профиль
-            System.out.println("Переход в профиль");
             SceneNavigator.goToProfile();
         } else {
             // Если не залогинен - идём на экран входа
-            System.out.println("⚠Переход на экран входа");
             SceneNavigator.goToLogin();
         }
     }

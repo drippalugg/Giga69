@@ -5,11 +5,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
 import java.net.URL;
 
 public class MainApp extends Application {
-
     private static Stage primaryStage;
 
     @Override
@@ -17,46 +15,28 @@ public class MainApp extends Application {
         try {
 
             primaryStage = stage;
-            primaryStage.setTitle("MasterParts - Энгельс");
+            primaryStage.setTitle("MasterParts");
             primaryStage.setWidth(600);
             primaryStage.setHeight(800);
 
-
             String fxmlPath = "/com/example/giga67/view/login.fxml";
-            System.out.println("🔍 Загрузка main.fxml: " + fxmlPath);
-
             URL fxmlUrl = getClass().getResource(fxmlPath);
             if (fxmlUrl == null) {
-                System.err.println("❌ FXML файл НЕ НАЙДЕН: " + fxmlPath);
                 throw new Exception("FXML файл не найден: " + fxmlPath);
             }
-
-            System.out.println("✅ FXML найден: " + fxmlUrl);
-
             FXMLLoader loader = new FXMLLoader(fxmlUrl);
             Parent root = loader.load();
-
             Scene scene = new Scene(root);
-
-            // Путь к CSS - ИСПРАВЛЕН
             String cssPath = "/com/example/giga67/css/styles.css";
-            System.out.println("🔍 Поиск CSS: " + cssPath);
-
             URL cssUrl = getClass().getResource(cssPath);
             if (cssUrl != null) {
-                System.out.println("✅ CSS найден: " + cssUrl);
                 scene.getStylesheets().add(cssUrl.toExternalForm());
-            } else {
-                System.err.println("⚠️ CSS не найден (необязательно): " + cssPath);
             }
 
             primaryStage.setScene(scene);
             primaryStage.show();
 
-            System.out.println("✅ Приложение запущено!");
-
         } catch (Exception e) {
-            System.err.println("❌ ОШИБКА при запуске:");
             e.printStackTrace();
             System.exit(1);
         }

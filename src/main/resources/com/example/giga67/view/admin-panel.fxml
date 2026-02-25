@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.giga67.controller.AdminPanelController" prefHeight="950" prefWidth="1400" style="-fx-font-family: 'Segoe UI'; -fx-font-size: 12;">
+   
+   <top>
+      <VBox style="-fx-background-color: #2c3e50; -fx-padding: 20;" spacing="10">
+         <Label text="🔧 MasterParts - Панель администратора" style="-fx-text-fill: white; -fx-font-size: 28; -fx-font-weight: bold;"/>
+         <Label text="Управление товарами и категориями" style="-fx-text-fill: #bdc3c7; -fx-font-size: 13;"/>
+      </VBox>
+   </top>
+   
+   <center>
+      <TabPane tabClosingPolicy="UNAVAILABLE" style="-fx-font-size: 13;">
+         <Tab text="Управление товарами" closable="false">
+            <VBox spacing="15" style="-fx-padding: 20;">
+
+               <HBox spacing="10" style="-fx-padding: 10; -fx-background-color: #ecf0f1; -fx-border-radius: 5;">
+                  <Button fx:id="addProductBtn" text="Добавить товар" style="-fx-padding: 10 20; -fx-background-color: #667EEA; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 12;" />
+                  <Button fx:id="editProductBtn" text="Редактировать" style="-fx-padding: 10 20; -fx-background-color: #667EEA; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 12;" />
+                  <Button fx:id="deleteProductBtn" text="Удалить" style="-fx-padding: 10 20; -fx-background-color: #667EEA; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 12;" />
+                  <Button fx:id="refreshProductsBtn" text="Обновить" style="-fx-padding: 10 20; -fx-background-color: #667EEA; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 12;" />
+                  <Region HBox.hgrow="ALWAYS" />
+                  <Label fx:id="productCountLabel" text="Товаров: 0" style="-fx-font-size: 12; -fx-text-fill: #2c3e50; -fx-font-weight: bold;" />
+               </HBox>
+
+               <TableView fx:id="productsTable" VBox.vgrow="ALWAYS" style="-fx-font-size: 11;">
+                  <columns>
+                     <TableColumn text="ID" prefWidth="50" />
+                     <TableColumn text="Название" prefWidth="250" />
+                     <TableColumn text="Артикул" prefWidth="120" />
+                     <TableColumn text="Бренд" prefWidth="150" />
+                     <TableColumn text="Цена" prefWidth="100" />
+                     <TableColumn text="Старая цена" prefWidth="120" />
+                     <TableColumn text="Категория" prefWidth="100" />
+                     <TableColumn text="Описание" prefWidth="400" />
+                  </columns>
+               </TableView>
+            </VBox>
+         </Tab>
+         
+         <!-- ТАБ КАТЕГОРИИ -->
+         <Tab text="Управление категориями" closable="false">
+            <VBox spacing="15" style="-fx-padding: 20;">
+               
+               <!-- КНОПКИ -->
+               <HBox spacing="10" style="-fx-padding: 10; -fx-background-color: #ecf0f1; -fx-border-radius: 5;">
+                  <Button fx:id="addCategoryBtn" text="Добавить категорию" style="-fx-padding: 10 20; -fx-background-color: #667EEA; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 12;" />
+                  <Button fx:id="editCategoryBtn" text="Редактировать" style="-fx-padding: 10 20; -fx-background-color: #667EEA; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 12;" />
+                  <Button fx:id="deleteCategoryBtn" text="Удалить" style="-fx-padding: 10 20; -fx-background-color: #667EEA; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 12;" />
+                  <Button fx:id="refreshCategoriesBtn" text="Обновить" style="-fx-padding: 10 20; -fx-background-color: #667EEA; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 12;" />
+                  <Region HBox.hgrow="ALWAYS" />
+                  <Label fx:id="categoryCountLabel" text="Категорий: 0" style="-fx-font-size: 12; -fx-text-fill: #2c3e50; -fx-font-weight: bold;" />
+               </HBox>
+
+               <TableView fx:id="categoriesTable" VBox.vgrow="ALWAYS" style="-fx-font-size: 11;">
+                  <columns>
+                     <TableColumn text="ID" prefWidth="50" />
+                     <TableColumn text="Название" prefWidth="200" />
+                     <TableColumn text="Иконка" prefWidth="100" />
+                     <TableColumn text="Описание" prefWidth="400" />
+                  </columns>
+               </TableView>
+            </VBox>
+         </Tab>
+         
+      </TabPane>
+   </center>
+   
+</BorderPane>

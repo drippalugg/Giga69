@@ -51,7 +51,7 @@
                         <Insets top="30" right="30" bottom="30" left="30"/>
                     </padding>
 
-                    <Label text="🔍 Найдите нужную автозапчасть"
+                    <Label text="Найдите нужную автозапчасть"
                            styleClass="search-title"/>
 
                     <HBox spacing="15" alignment="CENTER" maxWidth="700">

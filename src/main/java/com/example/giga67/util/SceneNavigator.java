@@ -12,7 +12,7 @@ import javafx.scene.Scene;
 public class SceneNavigator {
 
     public static void goToMain() {
-        loadScene("/com/example/giga67/view/main.fxml", "MasterParts - Энгельс", 1280, 920);
+        loadScene("/com/example/giga67/view/main.fxml", "MasterParts", 1280, 920);
     }
 
     public static void goToCategory(Category category) {

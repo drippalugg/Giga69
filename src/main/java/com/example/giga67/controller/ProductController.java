@@ -172,7 +172,6 @@ public class ProductController {
 
     @FXML
     private void goBack() {
-        System.out.println("← Возврат назад");
         SceneNavigator.goToMain();
     }
 }

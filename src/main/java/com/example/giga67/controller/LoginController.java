@@ -25,40 +25,24 @@ public class LoginController {
 
     @FXML
     public void initialize() {
-        System.out.println("LoginController.initialize() вызван");
-
         authService = SupabaseAuthService.getInstance();
-        System.out.println("SupabaseAuthService получен: " + (authService != null));
 
         if (registerBox != null) {
             registerBox.setVisible(false);
             registerBox.setManaged(false);
-            System.out.println("registerBox скрыт");
         }
 
         if (errorLabel != null) {
             errorLabel.setText("");
         }
-
-        // Выводим информацию о кнопках
-        System.out.println("Кнопки:");
-        System.out.println("  loginButton: " + (loginButton != null ? "OK" : "NULL"));
-        System.out.println("  registerButton: " + (registerButton != null ? "OK" : "NULL"));
-        System.out.println("  toggleButton: " + (toggleButton != null ? "OK" : "NULL"));
-
         updateUI();
-        System.out.println("LoginController initialized!");
     }
 
     @FXML
     private void handleLogin() {
-        System.out.println("handleLogin() вызван");
 
         String email = emailField.getText().trim();
         String password = passwordField.getText();
-
-        System.out.println("Email: " + email);
-        System.out.println("Password length: " + password.length());
 
         if (email.isEmpty() || password.isEmpty()) {
             showError("Заполните все поля");
@@ -69,28 +53,21 @@ public class LoginController {
             showError("Неверный формат email");
             return;
         }
-
-        System.out.println("Вызываем authService.login()...");
         boolean success = authService.login(email, password);
-        System.out.println("Результат login: " + success);
 
         if (success) {
-            System.out.println("Вход успешен! Проверяем isLoggedIn: " + authService.isLoggedIn());
             System.out.println("Текущий пользователь: " + authService.getCurrentUser());
 
             Platform.runLater(() -> {
-                System.out.println("🚀 Переход на главный экран...");
                 SceneNavigator.goToMain();
             });
         } else {
-            System.out.println("Вход не удался");
             showError("Неверный email или пароль");
         }
     }
 
     @FXML
     private void handleRegister() {
-        System.out.println("handleRegister() вызван");
 
         String email = emailField.getText().trim();
         String password = passwordField.getText();
@@ -120,14 +97,10 @@ public class LoginController {
         System.out.println("Результат register: " + success);
 
         if (success) {
-            System.out.println("Регистрация успешна! Проверяем isLoggedIn: " + authService.isLoggedIn());
-
             Platform.runLater(() -> {
-                System.out.println("🚀 Переход на главный экран...");
                 SceneNavigator.goToMain();
             });
         } else {
-            System.out.println("❌ Регистрация не удалась");
             showError("Ошибка регистрации. Email уже используется");
         }
     }
@@ -176,13 +149,12 @@ public class LoginController {
 
     @FXML
     private void guestContinue() {
-        System.out.println("👤 Продолжить как гость");
+        System.out.println("Продолжить как гость");
         SceneNavigator.goToMain();
     }
 
     @FXML
     private void goBack() {
-        System.out.println("← Go back clicked");
         SceneNavigator.goToMain();
     }
 
@@ -195,8 +167,6 @@ public class LoginController {
     }
 
     private boolean isValidEmail(String email) {
-        boolean valid = email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
-        System.out.println("📧 Email validation (" + email + "): " + valid);
-        return valid;
+        return email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
     }
 }

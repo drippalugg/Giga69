@@ -11,6 +11,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -75,53 +77,69 @@ public class CategoryController {
         card.setAlignment(Pos.TOP_CENTER);
         card.setPrefSize(280, 400);
         card.getStyleClass().add("product-card");
-        card.setPadding(new Insets(20));
+        card.setPadding(new Insets(12));
 
-        // Иконка
-        Label iconLabel = new Label("🎁");
-        iconLabel.setStyle("-fx-font-size: 80px;");
+        // Картинка товара
+        ImageView imageView = new ImageView();
+        imageView.setFitWidth(180);
+        imageView.setFitHeight(180);
+        imageView.setPreserveRatio(true);
+
+        String imageUrl = part.getImageUrl();
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            try {
+                Image img = new Image(imageUrl, 180, 180, true, true);
+                imageView.setImage(img);
+            } catch (Exception e) {
+                System.err.println("Ошибка загрузки изображения списка: " + e.getMessage());
+            }
+        }
 
         // Название
         Label nameLabel = new Label(part.getName());
-        nameLabel.getStyleClass().add("product-name");
+        nameLabel.setStyle(
+                "-fx-font-size: 16px; " +
+                        "-fx-font-weight: bold; " +
+                        "-fx-text-fill: #000000;"
+        );
         nameLabel.setWrapText(true);
-        nameLabel.setMaxWidth(240);
-        nameLabel.setAlignment(Pos.CENTER);
 
         // Артикул
-        Label articleLabel = new Label("Арт: " + part.getArticle());
-        articleLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #666;");
+        Label articleLabel = new Label("Артикул: " + part.getArticle());
+        articleLabel.setStyle(
+                "-fx-font-size: 12px; " +
+                        "-fx-text-fill: #666666;"
+        );
 
         // Бренд
-        Label brandLabel = new Label(part.getBrand());
-        brandLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #666; -fx-font-weight: bold;");
+        Label brandLabel = new Label("Бренд: " + part.getBrand());
+        brandLabel.setStyle(
+                "-fx-font-size: 12px; " +
+                        "-fx-text-fill: #666666;"
+        );
 
-        // Спейсер
         Region spacer = new Region();
         VBox.setVgrow(spacer, Priority.ALWAYS);
 
         // Цена и скидка
-        VBox priceBox = new VBox(5);
-        priceBox.setAlignment(Pos.CENTER);
+        HBox priceBox = new HBox(8);
+        priceBox.setAlignment(Pos.CENTER_LEFT);
 
         if (part.hasDiscount()) {
-            // 🔥 ЗАЧЁРКНУТАЯ СТАРАЯ ЦЕНА
             Label oldPriceLabel = new Label(String.format("%.0f ₽", part.getOldPrice()));
             oldPriceLabel.setStyle(
-                    "-fx-font-size: 16px; " +
-                            "-fx-text-fill: #999999; " +
+                    "-fx-font-size: 14px; " +
+                            "-fx-text-fill: #888888; " +
                             "-fx-strikethrough: true;"
             );
 
-            // Новая цена
             Label priceLabel = new Label(String.format("%.0f ₽", part.getPrice()));
             priceLabel.setStyle(
-                    "-fx-font-size: 24px; " +
+                    "-fx-font-size: 20px; " +
                             "-fx-font-weight: bold; " +
                             "-fx-text-fill: #000000;"
             );
 
-            // Бейдж скидки
             Label discountLabel = new Label("-" + part.getDiscountPercent() + "%");
             discountLabel.setStyle(
                     "-fx-background-color: #FF4757; " +
@@ -136,7 +154,7 @@ public class CategoryController {
         } else {
             Label priceLabel = new Label(String.format("%.0f ₽", part.getPrice()));
             priceLabel.setStyle(
-                    "-fx-font-size: 24px; " +
+                    "-fx-font-size: 20px; " +
                             "-fx-font-weight: bold; " +
                             "-fx-text-fill: #000000;"
             );
@@ -165,7 +183,7 @@ public class CategoryController {
         buttonsBox.getChildren().addAll(cartButton, favoriteButton);
 
         card.getChildren().addAll(
-                iconLabel,
+                imageView,
                 nameLabel,
                 articleLabel,
                 brandLabel,
@@ -178,6 +196,7 @@ public class CategoryController {
 
         return card;
     }
+
 
     private void addToCart(Part part) {
         cartManager.addToCart(part, 1);

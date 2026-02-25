@@ -11,12 +11,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,6 @@ public class CartController {
         loadCart();
         updateTotal();
 
-        System.out.println("CartController initialized!");
     }
 
     private void setupCartListView() {
@@ -72,19 +72,31 @@ public class CartController {
         mainBox.setPadding(new Insets(20));
         mainBox.setAlignment(Pos.CENTER_LEFT);
         mainBox.getStyleClass().add("cart-item");
-        mainBox.setStyle(
-                "-fx-background-color: white; " +
-                        "-fx-background-radius: 14; " +
-                        "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 6, 0, 0, 2);"
-        );
 
+        Part part = item.getPart();
+
+        // Картинка товара или эмодзи-подарок
+        ImageView imageView = new ImageView();
+        imageView.setFitWidth(80);
+        imageView.setFitHeight(80);
+        imageView.setPreserveRatio(true);
+
+        String imageUrl = part.getImageUrl();
+        System.out.println("cart imageUrl = " + imageUrl);
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            try {
+                imageView.setImage(new Image(imageUrl, 80, 80, true, true));
+            } catch (Exception e) {
+                System.err.println("Ошибка загрузки изображения в корзине: " + e.getMessage());
+                imageView.setImage(null);
+            }
+        }
+        // если не смогли загрузить – покажем просто эмодзи в Label
         Label iconLabel = new Label("🎁");
         iconLabel.setStyle("-fx-font-size: 36px;");
 
         VBox infoBox = new VBox(6);
         HBox.setHgrow(infoBox, Priority.ALWAYS);
-
-        Part part = item.getPart();
 
         Label nameLabel = new Label(part.getName());
         nameLabel.setStyle("-fx-font-size: 17px; -fx-font-weight: bold; -fx-text-fill: #000;");
@@ -117,7 +129,6 @@ public class CartController {
             if (newVal != null && newVal > 0) {
                 cartManager.updateQuantity(part, newVal);
                 updateTotal();
-                System.out.println("🔄 Обновлено количество: " + part.getName() + " → " + newVal);
             }
         });
 
@@ -171,19 +182,23 @@ public class CartController {
                                 "-fx-min-height: 50;"
                 )
         );
-
         removeBtn.setOnAction(e -> {
             cartManager.removeItem(part.getId());
             loadCart();
             updateTotal();
-            System.out.println("🗑️ Товар удалён: " + part.getName());
         });
 
-        mainBox.getChildren().addAll(iconLabel, infoBox, spacer, quantityBox, totalBox, removeBtn);
-        container.getChildren().add(mainBox);
+        // если картинка есть – ставим imageView, иначе эмодзи
+        if (imageView.getImage() != null) {
+            mainBox.getChildren().addAll(imageView, infoBox, spacer, quantityBox, totalBox, removeBtn);
+        } else {
+            mainBox.getChildren().addAll(iconLabel, infoBox, spacer, quantityBox, totalBox, removeBtn);
+        }
 
+        container.getChildren().add(mainBox);
         return container;
     }
+
 
     private void loadCart() {
         List<CartItem> items = cartManager.getItems();

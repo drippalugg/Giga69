@@ -24,7 +24,6 @@ public class PartsService {
 
     private void loadDataFromSupabase() {
         try {
-            System.out.println("📡 Загрузка данных из Supabase...");
 
             // Загрузка категорий
             var categoriesResponse = client.get("/rest/v1/categories?select=*");
@@ -40,8 +39,6 @@ public class PartsService {
                     );
                     categories.add(category);
                 }
-
-                System.out.println("✅ Загружено категорий: " + categories.size());
             }
 
             // Загрузка товаров
@@ -69,16 +66,18 @@ public class PartsService {
                             partJson.get("category_id").getAsInt()
                     );
 
-                    // Если есть description - устанавливаем через setter
                     if (partJson.has("description") && !partJson.get("description").isJsonNull()) {
                         part.setDescription(partJson.get("description").getAsString());
                     }
 
+
+                    if (partJson.has("image_url") && !partJson.get("image_url").isJsonNull()) {
+                        part.setImageUrl(partJson.get("image_url").getAsString());
+                    }
+
                     parts.add(part);
                 }
-
-                System.out.println("✅ Загружено товаров: " + parts.size());
-            }
+                }
 
         } catch (Exception e) {
             System.err.println("❌ Ошибка загрузки из Supabase:");

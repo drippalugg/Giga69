@@ -5,6 +5,8 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class SupabaseClient {
     private static SupabaseClient instance;
@@ -16,8 +18,6 @@ public class SupabaseClient {
         this.supabaseUrl = "https://uarcxsotrpdnwabpgjhp.supabase.co";
         this.supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhcmN4c290cnBkbndhYnBnamhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI4NjU5OTMsImV4cCI6MjA3ODQ0MTk5M30.nR2JZDVWD3wtdVYehE6ps6x35NClNBw1niNEA42qKGc";
         this.httpClient = HttpClient.newHttpClient();
-        System.out.println("🔗 Supabase Client initialized");
-        System.out.println("  URL: " + supabaseUrl);
     }
 
     public static synchronized SupabaseClient getInstance() {
@@ -26,6 +26,16 @@ public class SupabaseClient {
         }
         return instance;
     }
+
+    public String getSupabaseUrl() {
+        return supabaseUrl;
+    }
+
+    public String getSupabaseKey() {
+        return supabaseKey;
+    }
+
+    // ==================== REST API ====================
 
     public HttpResponse<String> get(String endpoint) throws IOException, InterruptedException {
         return get(endpoint, null);
@@ -42,13 +52,9 @@ public class SupabaseClient {
                 .GET()
                 .build();
 
-        System.out.println("🔍 GET " + endpoint);
-        System.out.println("🔑 Using token: " + (userToken != null ? "USER" : "ANON"));
-
         return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    // 🔥 POST с optional user token
     public HttpResponse<String> post(String endpoint, String jsonBody) throws IOException, InterruptedException {
         return post(endpoint, jsonBody, null);
     }
@@ -64,13 +70,9 @@ public class SupabaseClient {
                 .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                 .build();
 
-        System.out.println("📤 POST " + endpoint);
-        System.out.println("🔑 Using token: " + (userToken != null ? "USER" : "ANON"));
-
         return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    // 🔥 PATCH с optional user token
     public HttpResponse<String> patch(String endpoint, String jsonBody) throws IOException, InterruptedException {
         return patch(endpoint, jsonBody, null);
     }
@@ -86,13 +88,9 @@ public class SupabaseClient {
                 .method("PATCH", HttpRequest.BodyPublishers.ofString(jsonBody))
                 .build();
 
-        System.out.println("🔄 PATCH " + endpoint);
-        System.out.println("🔑 Using token: " + (userToken != null ? "USER" : "ANON"));
-
         return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    // 🔥 DELETE с optional user token
     public HttpResponse<String> delete(String endpoint) throws IOException, InterruptedException {
         return delete(endpoint, null);
     }
@@ -108,9 +106,83 @@ public class SupabaseClient {
                 .DELETE()
                 .build();
 
-        System.out.println("🗑️ DELETE " + endpoint);
-        System.out.println("🔑 Using token: " + (userToken != null ? "USER" : "ANON"));
+        return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    // ==================== STORAGE API ====================
+
+    /**
+     * Загружает файл в Supabase Storage.
+     * @param bucketName имя бакета (например, "product-images")
+     * @param filePath путь к файлу в бакете (например, "parts/123.jpg")
+     * @param localFile путь к локальному файлу на диске
+     * @return HttpResponse с результатом загрузки
+     */
+    public HttpResponse<String> uploadFile(String bucketName, String filePath, Path localFile)
+            throws IOException, InterruptedException {
+
+        String contentType = Files.probeContentType(localFile);
+        if (contentType == null) {
+            contentType = "application/octet-stream";
+        }
+
+        byte[] fileBytes = Files.readAllBytes(localFile);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(supabaseUrl + "/storage/v1/object/" + bucketName + "/" + filePath))
+                .header("apikey", supabaseKey)
+                .header("Authorization", "Bearer " + supabaseKey)
+                .header("Content-Type", contentType)
+                .POST(HttpRequest.BodyPublishers.ofByteArray(fileBytes))
+                .build();
 
         return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    /**
+     * Обновляет (перезаписывает) файл в Supabase Storage.
+     */
+    public HttpResponse<String> updateFile(String bucketName, String filePath, Path localFile)
+            throws IOException, InterruptedException {
+
+        String contentType = Files.probeContentType(localFile);
+        if (contentType == null) {
+            contentType = "application/octet-stream";
+        }
+
+        byte[] fileBytes = Files.readAllBytes(localFile);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(supabaseUrl + "/storage/v1/object/" + bucketName + "/" + filePath))
+                .header("apikey", supabaseKey)
+                .header("Authorization", "Bearer " + supabaseKey)
+                .header("Content-Type", contentType)
+                .PUT(HttpRequest.BodyPublishers.ofByteArray(fileBytes))
+                .build();
+
+        return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    /**
+     * Удаляет файл из Supabase Storage.
+     */
+    public HttpResponse<String> deleteFile(String bucketName, String filePath)
+            throws IOException, InterruptedException {
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(supabaseUrl + "/storage/v1/object/" + bucketName + "/" + filePath))
+                .header("apikey", supabaseKey)
+                .header("Authorization", "Bearer " + supabaseKey)
+                .DELETE()
+                .build();
+
+        return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    /**
+     * Возвращает публичный URL файла из Supabase Storage.
+     */
+    public String getPublicUrl(String bucketName, String filePath) {
+        return supabaseUrl + "/storage/v1/object/public/" + bucketName + "/" + filePath;
     }
 }

@@ -168,10 +168,8 @@ public class OrdersController {
     }
 
     private void loadOrders() {
-        System.out.println("Загрузка заказов...");
 
         if (!authService.isLoggedIn()) {
-            System.out.println("Пользователь не авторизован");
             if (emptyLabel != null) {
                 emptyLabel.setText("Войдите в систему\nдля просмотра заказов");
                 emptyLabel.setStyle(
@@ -217,13 +215,10 @@ public class OrdersController {
                 ordersListView.getItems().addAll(orders);
             }
         }
-
-        System.out.println("Загружено заказов: " + orders.size());
     }
 
     @FXML
     private void goBack() {
-        System.out.println("← Возврат на главную");
         SceneNavigator.goToMain();
     }
 }
