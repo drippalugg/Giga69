@@ -14,8 +14,8 @@
                 <Insets top="15" right="30" bottom="15" left="30"/>
             </padding>
 
-            <Button text="← Назад" onAction="#goBack" styleClass="back-button"/>
-            <Label text="🛒 Корзина" styleClass="page-title"/>
+            <Button text="Назад" onAction="#goBack" styleClass="back-button"/>
+            <Label text="Корзина" styleClass="page-title"/>
         </HBox>
     </top>
 
@@ -35,7 +35,7 @@
 
                 <!-- Центрированное сообщение о пустой корзине -->
                 <Label fx:id="emptyLabel"
-                       text="🛒 Корзина пуста"
+                       text="Корзина пуста"
                        styleClass="empty-message"
                        visible="false"
                        StackPane.alignment="CENTER"/>
@@ -48,15 +48,11 @@
 
             <!-- Кнопки действий -->
             <HBox spacing="15" alignment="CENTER">
-                <Button text="🗑️ Удалить выбранное"
-                        onAction="#handleRemoveItem"
-                        styleClass="secondary-button"/>
-
-                <Button text="🗑️ Очистить корзину"
+                <Button text="Очистить корзину"
                         onAction="#handleClearCart"
                         styleClass="danger-button"/>
 
-                <Button text="✅ Оформить заказ"
+                <Button text="Оформить заказ"
                         onAction="#handleCheckout"
                         styleClass="primary-button-large"/>
             </HBox>

@@ -14,8 +14,8 @@
                 <Insets top="15" right="30" bottom="15" left="30"/>
             </padding>
 
-            <Button text="← Назад" onAction="#goBack" styleClass="back-button"/>
-            <Label text="📦 Заказы" styleClass="page-title"/>
+            <Button text="Назад" onAction="#goBack" styleClass="back-button"/>
+            <Label text="Заказы" styleClass="page-title"/>
         </HBox>
     </top>
 
@@ -35,7 +35,7 @@
 
                 <!-- Центрированное сообщение о пустых заказах -->
                 <Label fx:id="emptyLabel"
-                       text="📦 Заказов нет"
+                       text="Заказов нет"
                        styleClass="empty-message"
                        visible="false"
                        StackPane.alignment="CENTER"/>

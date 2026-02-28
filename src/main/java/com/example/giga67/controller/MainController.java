@@ -68,7 +68,7 @@ public class MainController {
             Button adminBtn = new Button("Администратор");
             adminBtn.setStyle("-fx-font-size: 12; -fx-padding: 8 15; " +
                     "-fx-background-color: #e74c3c; -fx-text-fill: white; " +
-                    "-fx-font-weight: bold; -fx-cursor: hand;");
+                    "-fx-font-weight: bold; -fx-cursor: hand;" + "-fx-translate-y: -10;");
             adminBtn.setOnAction(e -> handleAdminPanel());
 
             // способ 1: если loginButton есть – добавляем рядом с ним

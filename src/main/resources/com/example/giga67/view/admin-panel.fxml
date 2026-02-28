@@ -6,7 +6,6 @@
    
    <top>
       <VBox style="-fx-background-color: #2c3e50; -fx-padding: 20;" spacing="10">
-         <Label text="🔧 MasterParts - Панель администратора" style="-fx-text-fill: white; -fx-font-size: 28; -fx-font-weight: bold;"/>
          <Label text="Управление товарами и категориями" style="-fx-text-fill: #bdc3c7; -fx-font-size: 13;"/>
       </VBox>
    </top>
@@ -39,11 +38,9 @@
                </TableView>
             </VBox>
          </Tab>
-         
          <!-- ТАБ КАТЕГОРИИ -->
          <Tab text="Управление категориями" closable="false">
             <VBox spacing="15" style="-fx-padding: 20;">
-               
                <!-- КНОПКИ -->
                <HBox spacing="10" style="-fx-padding: 10; -fx-background-color: #ecf0f1; -fx-border-radius: 5;">
                   <Button fx:id="addCategoryBtn" text="Добавить категорию" style="-fx-padding: 10 20; -fx-background-color: #667EEA; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 12;" />
@@ -64,7 +61,16 @@
                </TableView>
             </VBox>
          </Tab>
-         
+          <Tab text="Заказы">
+              <TableView fx:id="ordersTable">
+                  <columns>
+                      <TableColumn fx:id="numberCol" text="Номер"/>
+                      <TableColumn fx:id="userCol" text="Пользователь"/>
+                      <TableColumn fx:id="totalCol" text="Сумма"/>
+                      <TableColumn fx:id="statusCol" text="Статус"/>
+                  </columns>
+              </TableView>
+          </Tab>
       </TabPane>
    </center>
    

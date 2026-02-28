@@ -15,13 +15,13 @@
                 <Insets top="15" right="30" bottom="15" left="30"/>
             </padding>
 
-            <Button text="← Назад" onAction="#goBack" styleClass="back-button"/>
+            <Button text="Назад" onAction="#goBack" styleClass="back-button"/>
             <Label fx:id="titleLabel" text="Категория" styleClass="page-title"/>
 
             <Region HBox.hgrow="ALWAYS"/>
 
             <StackPane>
-                <Button text="🛒 Корзина" onAction="#openCart" styleClass="header-button"/>
+                <Button text="Корзина" onAction="#openCart" styleClass="header-button"/>
                 <Label fx:id="cartBadge" styleClass="badge" visible="false"/>
             </StackPane>
         </HBox>

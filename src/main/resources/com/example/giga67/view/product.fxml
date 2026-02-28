@@ -17,7 +17,7 @@
                 <Insets top="15" right="30" bottom="15" left="30"/>
             </padding>
 
-            <Button text="← Назад" onAction="#goBack" styleClass="back-button"/>
+            <Button text="Назад" onAction="#goBack" styleClass="back-button"/>
             <Label text="Информация о товаре" styleClass="page-title"/>
         </HBox>
     </top>
@@ -67,7 +67,7 @@
                     </HBox>
 
                     <HBox spacing="15">
-                        <Button text="🛒 Добавить в корзину" onAction="#addToCart"
+                        <Button text="Добавить в корзину" onAction="#addToCart"
                                 styleClass="primary-button-large" prefWidth="300"/>
                         <Button fx:id="favoriteButton" text="🤍 В избранное" onAction="#toggleFavorite"
                                 styleClass="secondary-button"/>

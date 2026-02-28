@@ -19,19 +19,19 @@
 
             <Pane HBox.hgrow="ALWAYS"/>
 
-            <Button text="📦 Заказы"
+            <Button text="Заказы"
                     onAction="#handleOrders"
                     styleClass="header-button"/>
 
-            <Button text="💖 Избранное"
+            <Button text="Избранное"
                     onAction="#handleFavorites"
                     styleClass="header-button"/>
 
-            <Button text="🛒 Корзина"
+            <Button text="Корзина"
                     onAction="#handleCart"
                     styleClass="header-button"/>
 
-            <Button text="👤 Войти"
+            <Button text="Профиль"
                     onAction="#handleLogin"
                     styleClass="primary-button"/>
         </HBox>
@@ -40,15 +40,15 @@
     <!-- Content -->
     <center>
         <ScrollPane fitToWidth="true" styleClass="content-scroll">
-            <VBox spacing="40" alignment="TOP_CENTER">
+            <VBox spacing="30" alignment="TOP_CENTER">
                 <padding>
-                    <Insets top="40" right="30" bottom="40" left="30"/>
+                    <Insets top="20" right="30" bottom="20" left="30"/>
                 </padding>
 
                 <!-- Search Section -->
                 <VBox spacing="25" alignment="CENTER" styleClass="search-section">
                     <padding>
-                        <Insets top="30" right="30" bottom="30" left="30"/>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
                     </padding>
 
                     <Label text="Найдите нужную автозапчасть"
@@ -68,7 +68,7 @@
 
                 <!-- Секция категорий -->
                 <VBox spacing="25" alignment="TOP_CENTER">
-                    <Label text="📂 Категории"
+                    <Label text="Категории"
                            styleClass="section-title"/>
 
                     <FlowPane fx:id="categoriesPane"

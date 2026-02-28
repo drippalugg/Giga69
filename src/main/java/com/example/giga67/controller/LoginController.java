@@ -10,6 +10,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import javafx.scene.control.CheckBox;
+import java.util.prefs.Preferences;
 
 public class LoginController {
     @FXML private TextField emailField;
@@ -20,13 +22,30 @@ public class LoginController {
     @FXML private Button loginButton;
     @FXML private Button registerButton;
     @FXML private Button toggleButton;
+    @FXML private CheckBox rememberMeCheckBox;
 
+    private Preferences prefs = Preferences.userNodeForPackage(LoginController.class);
+    private static final String PREF_EMAIL = "remember_email";
+    private static final String PREF_PASSWORD = "remember_password";
+    private static final String PREF_REMEMBER = "remember_flag";
     private SupabaseAuthService authService;
     private boolean isRegisterMode = false;
 
     @FXML
     public void initialize() {
         authService = SupabaseAuthService.getInstance();
+
+        // загрузка сохранённых данных
+        boolean remember = prefs.getBoolean(PREF_REMEMBER, false);
+        if (rememberMeCheckBox != null) {
+            rememberMeCheckBox.setSelected(remember);
+        }
+        if (remember) {
+            String savedEmail = prefs.get(PREF_EMAIL, "");
+            String savedPassword = prefs.get(PREF_PASSWORD, "");
+            if (emailField != null) emailField.setText(savedEmail);
+            if (passwordField != null) passwordField.setText(savedPassword);
+        }
 
         if (registerBox != null) {
             registerBox.setVisible(false);
@@ -38,6 +57,7 @@ public class LoginController {
         }
         updateUI();
     }
+
 
     @FXML
     private void handleLogin() {
@@ -57,6 +77,17 @@ public class LoginController {
         boolean success = authService.login(email, password);
 
         if (success) {
+            // сохранить или очистить
+            if (rememberMeCheckBox != null && rememberMeCheckBox.isSelected()) {
+                prefs.putBoolean(PREF_REMEMBER, true);
+                prefs.put(PREF_EMAIL, email);
+                prefs.put(PREF_PASSWORD, password);
+            } else {
+                prefs.putBoolean(PREF_REMEMBER, false);
+                prefs.remove(PREF_EMAIL);
+                prefs.remove(PREF_PASSWORD);
+            }
+
             System.out.println("Текущий пользователь: " + authService.getCurrentUser());
 
             Platform.runLater(() -> {
@@ -152,11 +183,6 @@ public class LoginController {
     @FXML
     private void guestContinue() {
         System.out.println("Продолжить как гость");
-        SceneNavigator.goToMain();
-    }
-
-    @FXML
-    private void goBack() {
         SceneNavigator.goToMain();
     }
 

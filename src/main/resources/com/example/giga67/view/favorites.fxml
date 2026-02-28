@@ -13,8 +13,8 @@
             <padding>
                 <Insets top="15" right="30" bottom="15" left="30"/>
             </padding>
-            <Button text="← Назад" onAction="#goBack" styleClass="back-button"/>
-            <Label text="💖 Избранное" styleClass="page-title"/>
+            <Button text="Назад" onAction="#goBack" styleClass="back-button"/>
+            <Label text="Избранное" styleClass="page-title"/>
         </HBox>
     </top>
 
@@ -25,9 +25,7 @@
                 <Insets top="30" right="30" bottom="30" left="30"/>
             </padding>
 
-            <!--  StackPane для центрирования сообщения -->
             <StackPane VBox.vgrow="ALWAYS">
-                <!-- ScrollPane с FlowPane для карточек товаров -->
                 <ScrollPane fx:id="favoritesScrollPane"
                             fitToWidth="true"
                             styleClass="content-scroll"
@@ -40,7 +38,6 @@
                               style="-fx-background-color: transparent;"/>
                 </ScrollPane>
 
-                <!-- Центрированное сообщение о пустом избранном -->
                 <Label fx:id="emptyLabel"
                        text="Избранное пусто"
                        styleClass="empty-message"

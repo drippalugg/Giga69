@@ -45,7 +45,7 @@ public class SceneNavigator {
             Scene scene = new Scene(root);
             addCSS(scene);
             MainApp.getPrimaryStage().setScene(scene);
-            MainApp.getPrimaryStage().setTitle("MasterParts - Поиск: " + query);
+            MainApp.getPrimaryStage().setTitle("MasterParts" + query);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -70,24 +70,24 @@ public class SceneNavigator {
     }
 
     public static void goToCart() {
-        loadScene("/com/example/giga67/view/cart.fxml", "MasterParts - Корзина", 1280, 900);
+        loadScene("/com/example/giga67/view/cart.fxml", "MasterPart", 1280, 900);
     }
 
     public static void goToLogin() {
-        loadScene("/com/example/giga67/view/login.fxml", "MasterParts - Вход", 600, 800);
+        loadScene("/com/example/giga67/view/login.fxml", "MasterParts", 600, 800);
     }
 
 
     public static void goToProfile() {
-        loadScene("/com/example/giga67/view/profile.fxml", "MasterParts - Профиль", 600, 800);
+        loadScene("/com/example/giga67/view/profile.fxml", "MasterParts", 600, 800);
     }
 
     public static void goToOrders() {
-        loadScene("/com/example/giga67/view/orders.fxml", "MasterParts - Заказы", 1280, 900);
+        loadScene("/com/example/giga67/view/orders.fxml", "MasterParts", 1280, 900);
     }
 
     public static void goToFavorites() {
-        loadScene("/com/example/giga67/view/favorites.fxml", "MasterParts - Избранное", 1280, 900);
+        loadScene("/com/example/giga67/view/favorites.fxml", "MasterParts", 1280, 900);
     }
 
     private static void loadScene(String fxmlPath, String title, int width, int height) {

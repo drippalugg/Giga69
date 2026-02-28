@@ -1,8 +1,11 @@
 package com.example.giga67.controller;
 
 import com.example.giga67.model.Category;
+import com.example.giga67.model.Order;
 import com.example.giga67.model.Part;
+import com.example.giga67.service.OrdersService;
 import com.example.giga67.service.PartsService;
+import com.example.giga67.service.SupabaseAuthService;
 import com.example.giga67.service.SupabaseClient;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -17,7 +20,6 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -28,7 +30,6 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.net.http.HttpResponse;
-import java.nio.file.Path;
 import java.util.Optional;
 
 public class AdminPanelController {
@@ -36,26 +37,56 @@ public class AdminPanelController {
     private static final String BUCKET_NAME = "images";
 
     // Товары
-    @FXML private Button addProductBtn;
-    @FXML private Button editProductBtn;
-    @FXML private Button deleteProductBtn;
-    @FXML private Button refreshProductsBtn;
-    @FXML private TableView<Part> productsTable;
-    @FXML private Label productCountLabel;
+    @FXML
+    private Button addProductBtn;
+    @FXML
+    private Button editProductBtn;
+    @FXML
+    private Button deleteProductBtn;
+    @FXML
+    private Button refreshProductsBtn;
+    @FXML
+    private TableView<Part> productsTable;
+    @FXML
+    private Label productCountLabel;
 
     // Категории
-    @FXML private Button addCategoryBtn;
-    @FXML private Button editCategoryBtn;
-    @FXML private Button deleteCategoryBtn;
-    @FXML private Button refreshCategoriesBtn;
-    @FXML private TableView<Category> categoriesTable;
-    @FXML private Label categoryCountLabel;
+    @FXML
+    private Button addCategoryBtn;
+    @FXML
+    private Button editCategoryBtn;
+    @FXML
+    private Button deleteCategoryBtn;
+    @FXML
+    private Button refreshCategoriesBtn;
+    @FXML
+    private TableView<Category> categoriesTable;
+    @FXML
+    private Label categoryCountLabel;
+
+    // Заказы (новый функционал)
+    @FXML
+    private TableView<Order> ordersTable;
+    @FXML
+    private TableColumn<Order, String> numberCol;
+    @FXML
+    private TableColumn<Order, String> userCol;
+    @FXML
+    private TableColumn<Order, Number> totalCol;
+    @FXML
+    private TableColumn<Order, String> statusCol;
+
+    private OrdersService ordersService;
+    private SupabaseAuthService authService;
 
     private final SupabaseClient client = SupabaseClient.getInstance();
     private final Gson gson = new Gson();
     private final ObservableList<Part> productsList = FXCollections.observableArrayList();
     private final ObservableList<Category> categoriesList = FXCollections.observableArrayList();
+    @FXML
+    private ComboBox<Category> categoryComboBox;
 
+    private PartsService partsService = new PartsService();
     @FXML
     public void initialize() {
         setupProductsTable();
@@ -63,10 +94,98 @@ public class AdminPanelController {
         setupProductsTab();
         setupCategoriesTab();
         loadData();
+        ordersService = new OrdersService();
+        authService = SupabaseAuthService.getInstance();
+        setupOrdersTable();
+        loadOrders();
+        if (categoryComboBox != null) {
+            categoryComboBox.setItems(partsService.getCategories());
+            categoryComboBox.setCellFactory(cb -> new ListCell<>() {
+                @Override
+                protected void updateItem(Category item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText(empty || item == null ? null : item.getName());
+                }
+            });
+            categoryComboBox.setButtonCell(new ListCell<>() {
+                @Override
+                protected void updateItem(Category item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText(empty || item == null ? null : item.getName());
+                }
+            });
+        }
     }
 
-    // Настройка таблиц
 
+    // ==================== ЗАКАЗЫ ====================
+
+    private void setupOrdersTable() {
+        if (ordersTable == null) return;
+
+        numberCol.setCellValueFactory(
+                data -> new SimpleStringProperty(data.getValue().getId())
+        );
+        userCol.setCellValueFactory(
+                data -> new SimpleStringProperty(data.getValue().getUserId())
+        );
+        totalCol.setCellValueFactory(
+                data -> new SimpleDoubleProperty(data.getValue().getTotalPrice())
+        );
+        statusCol.setCellValueFactory(
+                data -> new SimpleStringProperty(data.getValue().getStatus())
+        );
+
+        statusCol.setCellFactory(col -> new TableCell<Order, String>() {
+            private final ComboBox<String> combo = new ComboBox<>();
+
+            {
+                combo.getItems().addAll("new", "processing", "shipped", "done", "canceled");
+                combo.setOnAction(e -> {
+                    Order order = getTableView().getItems().get(getIndex());
+                    if (order == null) return;
+
+                    String newStatus = combo.getValue();
+                    System.out.println("🧾 PATCH for order id=" + order.getId() + " status=" + newStatus);
+                    System.out.println("🧾 PATCH for order id=" + order.getId() + " newStatus=" + newStatus);
+
+                    boolean ok = ordersService.updateOrderStatus(
+                            order.getId(),                 // тут uuid из id
+                            newStatus,
+                            authService.getAccessToken()
+                    );
+                    if (ok) {
+                        order.setStatus(newStatus);
+                    } else {
+                        combo.setValue(order.getStatus());
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    Order order = getTableView().getItems().get(getIndex());
+                    combo.setValue(order != null ? order.getStatus() : null);
+                    setGraphic(combo);
+                }
+            }
+        });
+    }
+
+
+    private void loadOrders() {
+        String token = authService.getAccessToken();
+        ObservableList<Order> orders = ordersService.getAllOrders(token); // ← вот он, ObservableList<Order>
+        ordersTable.setItems(orders);
+    }
+
+
+
+    // Настройка таблиц
     @SuppressWarnings("unchecked")
     private void setupProductsTable() {
         TableColumn<Part, Integer> idCol = new TableColumn<>("ID");
@@ -500,8 +619,25 @@ public class AdminPanelController {
         priceField.setPromptText("Цена");
         TextField oldPriceField = new TextField();
         oldPriceField.setPromptText("Старая цена (0 если нет)");
-        TextField categoryIdField = new TextField();
-        categoryIdField.setPromptText("ID категории");
+        //TextField categoryIdField = new TextField();
+        //categoryIdField.setPromptText("ID категории");
+        ComboBox<Category> categoryComboBox = new ComboBox<>();
+        categoryComboBox.setPromptText("Категория");
+        categoryComboBox.setItems(partsService.getCategories());
+        categoryComboBox.setCellFactory(cb -> new ListCell<>() {
+            @Override
+            protected void updateItem(Category item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : item.getName());
+            }
+        });
+        categoryComboBox.setButtonCell(new ListCell<>() {
+            @Override
+            protected void updateItem(Category item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : item.getName());
+            }
+        });
         TextArea descriptionArea = new TextArea();
         descriptionArea.setPromptText("Описание товара");
         descriptionArea.setPrefRowCount(3);
@@ -562,7 +698,11 @@ public class AdminPanelController {
             brandField.setText(existing.getBrand());
             priceField.setText(String.valueOf(existing.getPrice()));
             oldPriceField.setText(String.valueOf(existing.getOldPrice()));
-            categoryIdField.setText(String.valueOf(existing.getCategoryId()));
+            Category currentCat = partsService.getCategories().stream()
+                    .filter(c -> c.getId() == existing.getCategoryId())
+                    .findFirst()
+                    .orElse(null);
+            categoryComboBox.setValue(currentCat);
             descriptionArea.setText(existing.getDescription() != null ? existing.getDescription() : "");
 
             if (existing.getImageUrl() != null && !existing.getImageUrl().isEmpty()) {
@@ -590,10 +730,11 @@ public class AdminPanelController {
         grid.add(priceField, 1, row++);
         grid.add(new Label("Старая цена:"), 0, row);
         grid.add(oldPriceField, 1, row++);
-        grid.add(new Label("ID категории:"), 0, row);
-        grid.add(categoryIdField, 1, row++);
+        grid.add(new Label("Категория:"), 0, row);
+        grid.add(categoryComboBox, 1, row++);
         grid.add(new Label("Описание:"), 0, row);
         grid.add(descriptionArea, 1, row++);
+
 
         // Секция изображения
         grid.add(new Separator(), 0, row++, 2, 1);
@@ -618,7 +759,14 @@ public class AdminPanelController {
                     double price = Double.parseDouble(priceField.getText().trim());
                     double oldPrice = oldPriceField.getText().trim().isEmpty() ? 0 :
                             Double.parseDouble(oldPriceField.getText().trim());
-                    int categoryId = Integer.parseInt(categoryIdField.getText().trim());
+                    Category selected = categoryComboBox.getValue();
+                    if (selected == null) {
+                        // показать ошибку и выйти из void-метода
+                        return null;
+                    }
+                    int categoryId = selected.getId(); // и дальше как раньше
+
+
 
                     if (name.isEmpty() || article.isEmpty() || brand.isEmpty()) {
                         showError("Ошибка", "Заполните все обязательные поля.");
