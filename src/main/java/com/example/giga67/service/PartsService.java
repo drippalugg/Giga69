@@ -77,7 +77,7 @@ public class PartsService {
 
                     parts.add(part);
                 }
-                }
+            }
 
         } catch (Exception e) {
             System.err.println("❌ Ошибка загрузки из Supabase:");

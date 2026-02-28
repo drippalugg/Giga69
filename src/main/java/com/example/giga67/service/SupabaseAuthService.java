@@ -148,7 +148,28 @@ public class SupabaseAuthService {
             System.err.println("⚠️ createProfile error: " + e.getMessage());
         }
     }
+    public boolean updateProfileName(String newName) {
+        try {
+            if (currentUser == null || accessToken == null) return false;
 
+            String userId = currentUser.getId();
+            JsonObject body = new JsonObject();
+            body.addProperty("name", newName);
+
+            String endpoint = "/rest/v1/profiles?id=eq." + userId;
+            HttpResponse<String> resp = client.patch(
+                    endpoint,
+                    gson.toJson(body),
+                    accessToken
+            );
+            System.out.println("📝 updateProfileName status: " + resp.statusCode());
+            return resp.statusCode() == 200 || resp.statusCode() == 204;
+        } catch (Exception e) {
+            System.err.println("❌ updateProfileName error: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     public void logout() {
         currentUser = null;

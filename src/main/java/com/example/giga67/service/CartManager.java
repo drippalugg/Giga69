@@ -60,7 +60,8 @@ public class CartManager {
     private void loadCartFromSupabase(String userId) {
         try {
             String endpoint = "/rest/v1/cart?user_id=eq." + userId + "&select=*";
-            HttpResponse<String> response = client.get(endpoint);
+            String token = authService.getAccessToken();
+            HttpResponse<String> response = client.get(endpoint, token);
 
             if (response.statusCode() == 200) {
                 JsonArray jsonArray = gson.fromJson(response.body(), JsonArray.class);
@@ -88,7 +89,8 @@ public class CartManager {
     private void loadFavoritesFromSupabase(String userId) {
         try {
             String endpoint = "/rest/v1/favorites?user_id=eq." + userId + "&select=*";
-            HttpResponse<String> response = client.get(endpoint);
+            String token = authService.getAccessToken();
+            HttpResponse<String> response = client.get(endpoint, token);
 
             if (response.statusCode() == 200) {
                 JsonArray jsonArray = gson.fromJson(response.body(), JsonArray.class);
@@ -233,7 +235,7 @@ public class CartManager {
         return favorites;
     }
 
-    // ==================== SUPABASE ОПЕРАЦИИ ====================
+// ==================== SUPABASE ОПЕРАЦИИ ====================
 
     private void addCartToSupabase(String userId, int partId, int quantity) {
         try {
@@ -241,7 +243,8 @@ public class CartManager {
                     "{\"user_id\":\"%s\",\"part_id\":%d,\"quantity\":%d}",
                     userId, partId, quantity
             );
-            HttpResponse<String> response = client.post("/rest/v1/cart", json);
+            String token = authService.getAccessToken();
+            HttpResponse<String> response = client.post("/rest/v1/cart", json, token);
             System.out.println("💾 Товар добавлен в корзину (Supabase) - статус: " + response.statusCode());
         } catch (Exception e) {
             System.err.println("❌ Ошибка добавления в корзину: " + e.getMessage());
@@ -256,7 +259,8 @@ public class CartManager {
                     "/rest/v1/cart?user_id=eq.%s&part_id=eq.%d",
                     userId, partId
             );
-            HttpResponse<String> response = client.patch(endpoint, json);
+            String token = authService.getAccessToken();
+            HttpResponse<String> response = client.patch(endpoint, json, token);
             System.out.println("💾 Количество обновлено (Supabase) - статус: " + response.statusCode());
         } catch (Exception e) {
             System.err.println("❌ Ошибка обновления корзины: " + e.getMessage());
@@ -270,7 +274,8 @@ public class CartManager {
                     "/rest/v1/cart?user_id=eq.%s&part_id=eq.%d",
                     userId, partId
             );
-            HttpResponse<String> response = client.delete(endpoint);
+            String token = authService.getAccessToken();
+            HttpResponse<String> response = client.delete(endpoint, token);
             System.out.println("🗑️ Товар удалён из корзины (Supabase) - статус: " + response.statusCode());
         } catch (Exception e) {
             System.err.println("❌ Ошибка удаления из корзины: " + e.getMessage());
@@ -281,7 +286,8 @@ public class CartManager {
     private void clearCartInSupabase(String userId) {
         try {
             String endpoint = "/rest/v1/cart?user_id=eq." + userId;
-            HttpResponse<String> response = client.delete(endpoint);
+            String token = authService.getAccessToken();
+            HttpResponse<String> response = client.delete(endpoint, token);
             System.out.println("🗑️ Корзина очищена (Supabase) - статус: " + response.statusCode());
         } catch (Exception e) {
             System.err.println("❌ Ошибка очистки корзины: " + e.getMessage());
@@ -295,7 +301,8 @@ public class CartManager {
                     "{\"user_id\":\"%s\",\"part_id\":%d}",
                     userId, partId
             );
-            HttpResponse<String> response = client.post("/rest/v1/favorites", json);
+            String token = authService.getAccessToken();
+            HttpResponse<String> response = client.post("/rest/v1/favorites", json, token);
             System.out.println("💖 Товар добавлен в избранное (Supabase) - статус: " + response.statusCode());
         } catch (Exception e) {
             System.err.println("❌ Ошибка добавления в избранное: " + e.getMessage());
@@ -309,7 +316,8 @@ public class CartManager {
                     "/rest/v1/favorites?user_id=eq.%s&part_id=eq.%d",
                     userId, partId
             );
-            HttpResponse<String> response = client.delete(endpoint);
+            String token = authService.getAccessToken();
+            HttpResponse<String> response = client.delete(endpoint, token);
             System.out.println("💔 Товар удалён из избранного (Supabase) - статус: " + response.statusCode());
         } catch (Exception e) {
             System.err.println("❌ Ошибка удаления из избранного: " + e.getMessage());

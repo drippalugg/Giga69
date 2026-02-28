@@ -58,9 +58,14 @@ public class ProfileController {
             showMessage("Имя не может быть пустым", false);
             return;
         }
-        user.setName(newName);
-        showMessage("Изменения сохранены успешно!", true);
 
+        boolean ok = authService.updateProfileName(newName);
+        if (ok) {
+            user.setName(newName);
+            showMessage("Изменения сохранены успешно!", true);
+        } else {
+            showMessage("Ошибка сохранения имени в профиле", false);
+        }
     }
 
     @FXML

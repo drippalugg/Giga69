@@ -1,5 +1,6 @@
 package com.example.giga67.controller;
 
+import com.example.giga67.service.CartManager;
 import com.example.giga67.service.SupabaseAuthService;
 import com.example.giga67.util.SceneNavigator;
 import javafx.application.Platform;
@@ -59,6 +60,7 @@ public class LoginController {
             System.out.println("Текущий пользователь: " + authService.getCurrentUser());
 
             Platform.runLater(() -> {
+                CartManager.getInstance().loadData();
                 SceneNavigator.goToMain();
             });
         } else {
