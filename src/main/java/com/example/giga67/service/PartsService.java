@@ -113,4 +113,43 @@ public class PartsService {
     public ObservableList<Part> getParts() {
         return parts;
     }
+    public static String buildFilterQuery(String baseQuery,
+                                          String article,
+                                          String brand,
+                                          Double priceMin,
+                                          Double priceMax,
+                                          boolean discountOnly) {
+
+        StringBuilder sb = new StringBuilder();
+
+        if (baseQuery != null && !baseQuery.isBlank()) {
+            sb.append("q=").append(baseQuery.trim());
+        }
+
+        if (article != null) {
+            appendParam(sb, "article", article);
+        }
+        if (brand != null) {
+            appendParam(sb, "brand", brand);
+        }
+        if (priceMin != null) {
+            appendParam(sb, "minPrice", String.valueOf(priceMin));
+        }
+        if (priceMax != null) {
+            appendParam(sb, "maxPrice", String.valueOf(priceMax));
+        }
+        if (discountOnly) {
+            appendParam(sb, "discountOnly", "true");
+        }
+
+        return sb.toString();
+    }
+
+    private static void appendParam(StringBuilder sb, String name, String value) {
+        if (sb.length() > 0) {
+            sb.append("&");
+        }
+        sb.append(name).append("=").append(value);
+    }
+
 }

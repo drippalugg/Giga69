@@ -43,11 +43,64 @@ public class CategoryController {
     }
 
     public void setSearchQuery(String query) {
-        if (titleLabel != null) {
-            titleLabel.setText("Результаты поиска: " + query);
+        // query может быть просто текстом или строкой с параметрами вида:
+        // q=текст&min=100&max=500&discount=1
+        String titleText = "Результаты поиска";
+
+        String searchText = extractParam(query, "q");
+        if (searchText == null || searchText.isBlank()) {
+            // если параметра q нет — считаем, что вся строка это текст
+            searchText = (query == null) ? "" : query;
         }
-        loadProducts(partsService.searchParts(query));
+
+        if (!searchText.isBlank()) {
+            titleText += ": " + searchText;
+        }
+        if (titleLabel != null) {
+            titleLabel.setText(titleText);
+        }
+
+        // разбираем числа и скидку
+        Double minPrice = parseDoubleOrNull(extractParam(query, "min"));
+        Double maxPrice = parseDoubleOrNull(extractParam(query, "max"));
+        boolean discountOnly = "1".equals(extractParam(query, "discount"));
+
+        // сначала обычный текстовый поиск по name/article/brand
+        ObservableList<Part> base = partsService.searchParts(searchText);
+
+        // затем фильтруем по цене и скидке
+        ObservableList<Part> filtered = base.filtered(part -> {
+            double price = part.getPrice();
+            if (minPrice != null && price < minPrice) return false;
+            if (maxPrice != null && price > maxPrice) return false;
+            if (discountOnly && !part.hasDiscount()) return false;
+            return true;
+        });
+
+        loadProducts(filtered);
     }
+
+    private String extractParam(String query, String name) {
+        if (query == null) return null;
+        String[] parts = query.split("&");
+        for (String part : parts) {
+            String[] kv = part.split("=", 2);
+            if (kv.length == 2 && kv[0].equals(name)) {
+                return kv[1];
+            }
+        }
+        return null;
+    }
+
+    private Double parseDoubleOrNull(String text) {
+        if (text == null || text.isBlank()) return null;
+        try {
+            return Double.parseDouble(text.trim());
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
 
     private void loadProducts(ObservableList<Part> products) {
         if (productsPane == null) {
@@ -196,6 +249,7 @@ public class CategoryController {
 
         return card;
     }
+
 
 
     private void addToCart(Part part) {

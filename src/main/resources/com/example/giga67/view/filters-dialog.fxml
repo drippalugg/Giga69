@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.giga67.controller.FiltersController"
+      spacing="10"
+      styleClass="filters-dialog-root">
+    <padding>
+        <Insets top="15" right="15" bottom="15" left="15"/>
+    </padding>
+
+    <Label text="Фильтры поиска"
+           styleClass="filters-dialog-title"/>
+
+    <Label text="Артикул содержит:"
+           styleClass="filters-dialog-label"/>
+    <TextField fx:id="articleField"
+               promptText="Например: 123"
+               styleClass="filters-dialog-input"/>
+
+    <Label text="Бренд содержит:"
+           styleClass="filters-dialog-label"/>
+    <TextField fx:id="brandField"
+               promptText="Например: Bosch"
+               styleClass="filters-dialog-input"/>
+
+    <Label text="Цена от / до:"
+           styleClass="filters-dialog-label"/>
+    <HBox spacing="10">
+        <TextField fx:id="priceMinField"
+                   promptText="от"
+                   styleClass="filters-dialog-input"/>
+        <TextField fx:id="priceMaxField"
+                   promptText="до"
+                   styleClass="filters-dialog-input"/>
+    </HBox>
+
+    <CheckBox fx:id="discountOnlyCheck"
+              text="Только со скидкой"/>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT"
+          styleClass="filters-dialog-buttons">
+        <Button text="Сбросить"
+                onAction="#handleReset"
+                styleClass="filters-reset-button"/>
+        <Button text="Применить"
+                onAction="#handleApply"
+                styleClass="filters-apply-button"/>
+    </HBox>
+</VBox>

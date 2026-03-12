@@ -15,7 +15,7 @@
             </padding>
 
             <Label text="MasterParts" styleClass="logo"/>
-            <Label fx:id="locationLabel" text="📍 Энгельс" styleClass="location"/>
+            <Label fx:id="locationLabel" text="г.Энгельс" styleClass="location"/>
 
             <Pane HBox.hgrow="ALWAYS"/>
 
@@ -62,6 +62,11 @@
 
                         <Button text="🔍 Найти"
                                 onAction="#handleSearch"
+                                styleClass="search-button"/>
+
+                        <Button text="Фильтры"
+                                fx:id="filtersButton"
+                                onAction="#handleFilters"
                                 styleClass="search-button"/>
                     </HBox>
                 </VBox>

@@ -13,19 +13,25 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 public class MainController {
     @FXML private Label locationLabel;
     @FXML private TextField searchField;
     @FXML private FlowPane categoriesPane;
     @FXML private Button loginButton;
+    @FXML private Button filtersButton;
 
     private PartsService partsService;
     private SupabaseAuthService authService;
 
     @FXML
     public void initialize() {
-        System.out.println("MainController initialized!");
 
         partsService = new PartsService();
         authService = SupabaseAuthService.getInstance();
@@ -173,6 +179,71 @@ public class MainController {
         String query = searchField.getText().trim();
         if (!query.isEmpty()) {
             SceneNavigator.goToSearch(query);
+        }
+    }
+    @FXML
+    private void handleFilters(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/com/example/giga67/view/filters-dialog.fxml")
+            );
+            Parent root = loader.load();
+            FiltersController controller = loader.getController();
+
+            Stage dialog = new Stage();
+            dialog.initOwner(filtersButton.getScene().getWindow());
+            dialog.initModality(Modality.WINDOW_MODAL);
+            dialog.setTitle("Фильтры");
+
+            // создаём сцену ОДИН раз и сразу подключаем styles.css
+            Scene scene = new Scene(root);
+            var cssUrl = getClass().getResource("/com/example/giga67/css/styles.css");
+            if (cssUrl != null) {
+                scene.getStylesheets().add(cssUrl.toExternalForm());
+            }
+            dialog.setScene(scene);
+
+            dialog.setResizable(false);
+            dialog.showAndWait();
+
+            FiltersController.FilterData data = controller.getResult();
+            if (data == null) {
+                return; // просто закрыли окно
+            }
+
+            // базовый текст запроса
+            String baseQuery = "";
+            if (searchField != null && searchField.getText() != null) {
+                baseQuery = searchField.getText().trim();
+            }
+            if (baseQuery.isBlank() && data.article() != null) {
+                baseQuery = data.article();
+            }
+            if (baseQuery.isBlank() && data.brand() != null) {
+                baseQuery = data.brand();
+            }
+            if (baseQuery.isBlank()) {
+                return;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("q=").append(baseQuery);
+
+            if (data.priceMin() != null) {
+                sb.append("&min=").append(data.priceMin());
+            }
+            if (data.priceMax() != null) {
+                sb.append("&max=").append(data.priceMax());
+            }
+            if (data.discountOnly()) {
+                sb.append("&discount=1");
+            }
+
+            String fullQuery = sb.toString();
+            SceneNavigator.goToSearch(fullQuery);
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

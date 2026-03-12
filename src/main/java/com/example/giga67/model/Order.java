@@ -90,10 +90,12 @@ public class Order {
                 return "В обработке";
             case "shipped":
                 return "Отправлен";
-            case "delivered":
+            case "done":
                 return "Доставлен";
-            case "cancelled":
+            case "canceled":
                 return "Отменён";
+            case "new":
+                return "Новый";
             default:
                 return status;
         }
