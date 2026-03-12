@@ -38,18 +38,12 @@ public class SupabaseAuthService {
                     gson.toJson(credentials)
             );
 
-            System.out.println("🔐 Login response status: " + response.statusCode());
-            System.out.println("📩 Response body: " + response.body());
-
             if (response.statusCode() == 200) {
                 JsonObject jsonResponse = gson.fromJson(response.body(), JsonObject.class);
                 accessToken = jsonResponse.get("access_token").getAsString();
                 JsonObject userJson = jsonResponse.getAsJsonObject("user");
-
                 String userId = userJson.get("id").getAsString();
                 String userEmail = userJson.get("email").getAsString();
-
-                // тянем профиль (name + role) из таблицы profiles
                 User userWithProfile = fetchUserProfile(userId, userEmail);
                 currentUser = userWithProfile;
                 return true;
@@ -62,7 +56,6 @@ public class SupabaseAuthService {
 
     private User fetchUserProfile(String userId, String fallbackEmail) {
         try {
-            // /rest/v1/profiles?id=eq.<uuid>&select=*
             HttpResponse<String> response = client.get(
                     "/rest/v1/profiles?id=eq." + userId + "&select=*",
                     accessToken
@@ -86,10 +79,9 @@ public class SupabaseAuthService {
                 }
             }
         } catch (Exception e) {
-            System.err.println("⚠️ fetchUserProfile error: " + e.getMessage());
         }
 
-        // fallback: без профиля, роль user
+        // Роль user (фолбек)
         return new User(userId, fallbackEmail, fallbackEmail.split("@")[0], "user");
     }
 
@@ -108,15 +100,10 @@ public class SupabaseAuthService {
                     gson.toJson(credentials)
             );
 
-            System.out.println("📝 Register response status: " + response.statusCode());
-            System.out.println("📩 Response body: " + response.body());
-
             if (response.statusCode() == 200) {
-                // после регистрации Supabase сам создаёт запись в profiles (если настроен триггер)
                 return login(email, password);
             }
         } catch (Exception e) {
-            System.err.println("❌ Register error: " + e.getMessage());
             e.printStackTrace();
         }
         return false;
@@ -143,9 +130,7 @@ public class SupabaseAuthService {
                     gson.toJson(profile),
                     accessToken
             );
-            System.out.println("📄 createProfile status: " + insert.statusCode());
         } catch (Exception e) {
-            System.err.println("⚠️ createProfile error: " + e.getMessage());
         }
     }
     public boolean updateProfileName(String newName) {

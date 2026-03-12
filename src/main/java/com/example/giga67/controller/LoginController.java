@@ -88,7 +88,7 @@ public class LoginController {
                 prefs.remove(PREF_PASSWORD);
             }
 
-            System.out.println("Текущий пользователь: " + authService.getCurrentUser());
+
 
             Platform.runLater(() -> {
                 CartManager.getInstance().loadData();
@@ -106,10 +106,6 @@ public class LoginController {
         String password = passwordField.getText();
         String name = nameField != null ? nameField.getText().trim() : "";
 
-        System.out.println("Email: " + email);
-        System.out.println("Password length: " + password.length());
-        System.out.println("Name: " + name);
-
         if (email.isEmpty() || password.isEmpty() || name.isEmpty()) {
             showError("Заполните все поля");
             return;
@@ -124,10 +120,7 @@ public class LoginController {
             showError("Пароль должен содержать минимум 6 символов");
             return;
         }
-
-        System.out.println("Вызываем authService.register()...");
         boolean success = authService.register(email, password, name);
-        System.out.println("Результат register: " + success);
 
         if (success) {
             Platform.runLater(() -> {
@@ -140,54 +133,40 @@ public class LoginController {
 
     @FXML
     private void toggleMode() {
-        System.out.println("toggleMode() вызван. Текущий режим: " + (isRegisterMode ? "REGISTER" : "LOGIN"));
-
         isRegisterMode = !isRegisterMode;
-
-        System.out.println("Новый режим: " + (isRegisterMode ? "REGISTER" : "LOGIN"));
-
         updateUI();
-
         if (errorLabel != null) {
             errorLabel.setText("");
         }
     }
 
     private void updateUI() {
-        System.out.println("updateUI() вызван. Режим: " + (isRegisterMode ? "REGISTER" : "LOGIN"));
-
         if (registerBox != null) {
             registerBox.setVisible(isRegisterMode);
             registerBox.setManaged(isRegisterMode);
-            System.out.println("  registerBox visible: " + isRegisterMode);
         }
 
         if (loginButton != null) {
             loginButton.setVisible(!isRegisterMode);
             loginButton.setManaged(!isRegisterMode);
-            System.out.println("  loginButton visible: " + !isRegisterMode);
         }
 
         if (registerButton != null) {
             registerButton.setVisible(isRegisterMode);
             registerButton.setManaged(isRegisterMode);
-            System.out.println("  registerButton visible: " + isRegisterMode);
         }
 
         if (toggleButton != null) {
             toggleButton.setText(isRegisterMode ? "Уже есть аккаунт? Войти" : "Нет аккаунта? Зарегистрироваться");
-            System.out.println("  toggleButton text: " + toggleButton.getText());
         }
     }
 
     @FXML
     private void guestContinue() {
-        System.out.println("Продолжить как гость");
         SceneNavigator.goToMain();
     }
 
     private void showError(String message) {
-        System.out.println("Ошибка: " + message);
         if (errorLabel != null) {
             errorLabel.setText(message);
             errorLabel.setStyle("-fx-text-fill: red; -fx-font-size: 13px;");

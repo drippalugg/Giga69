@@ -13,7 +13,6 @@ public class MainApp extends Application {
     @Override
     public void start(Stage stage) {
         try {
-
             primaryStage = stage;
             primaryStage.setTitle("MasterParts");
             primaryStage.setWidth(600);
@@ -41,7 +40,6 @@ public class MainApp extends Application {
             System.exit(1);
         }
     }
-
     public static Stage getPrimaryStage() {
         return primaryStage;
     }

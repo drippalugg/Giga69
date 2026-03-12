@@ -17,7 +17,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.Priority;
 
-
 public class FavoritesController {
     @FXML private FlowPane productsPane;
     @FXML private Label emptyLabel;
@@ -29,19 +28,20 @@ public class FavoritesController {
     public void initialize() {
         cartManager = CartManager.getInstance();
         loadFavorites();
-        System.out.println("FavoritesController initialized!");
     }
 
+    // ------------- Избранное (отображение товаров в избранном/корзине пользователей) ------------- \\
+
+    // Загрузка избранного пользователя
     private void loadFavorites() {
         if (productsPane == null) {
-            System.err.println("productsPane is null!");
             return;
         }
-
         productsPane.getChildren().clear();
 
         if (cartManager.getFavorites().isEmpty()) {
-// Показываем центрированное сообщение
+
+            // Отображение центрированного сообщения
             if (emptyLabel != null) {
                 emptyLabel.setText("Избранное пусто");
                 emptyLabel.setStyle(
@@ -55,11 +55,10 @@ public class FavoritesController {
             if (favoritesScrollPane != null) {
                 favoritesScrollPane.setVisible(false);
             }
-            System.out.println("Избранное пусто");
             return;
         }
 
-// Скрываем сообщение, показываем товары
+        // Скрываем сообщение, показываем товары
         if (emptyLabel != null) {
             emptyLabel.setVisible(false);
         }
@@ -71,10 +70,9 @@ public class FavoritesController {
             VBox productCard = createProductCard(part);
             productsPane.getChildren().add(productCard);
         }
-
-        System.out.println("Загружено избранных товаров: " + cartManager.getFavorites().size());
     }
 
+    // Создание карточки товара в избранном с его хар-ми
     private VBox createProductCard(Part part) {
         VBox card = new VBox(12);
         card.setAlignment(Pos.TOP_CENTER);
@@ -82,7 +80,7 @@ public class FavoritesController {
         card.getStyleClass().add("product-card");
         card.setPadding(new Insets(20));
 
-
+        // Изображение товара
         ImageView imageView = new ImageView();
         imageView.setFitWidth(120);
         imageView.setFitHeight(120);
@@ -92,21 +90,19 @@ public class FavoritesController {
         if (imageUrl != null && !imageUrl.isEmpty()) {
             try {
                 imageView.setImage(new Image(imageUrl, 120, 120, true, true));
-                card.getChildren().add(imageView);           // добавляем КАРТИНКУ
+                card.getChildren().add(imageView);           // Изображение товара
             } catch (Exception e) {
-                System.err.println("Ошибка изображения в избранном: " + e.getMessage());
                 Label iconLabel = new Label("🎁");
                 iconLabel.setStyle("-fx-font-size: 80px;");
-                card.getChildren().add(iconLabel);           // если ошибка – показываем ПОДАРОК
+                card.getChildren().add(iconLabel);           // Заглушка при ошибке загрузке изображения
             }
         } else {
             Label iconLabel = new Label("🎁");
             iconLabel.setStyle("-fx-font-size: 80px;");
-            card.getChildren().add(iconLabel);               // нет url – показываем ПОДАРОК
+            card.getChildren().add(iconLabel);               // Заглушка при отсутствии URL изображения
         }
 
-
-// Название
+        // Название
         Label nameLabel = new Label(part.getName());
         nameLabel.getStyleClass().add("product-name");
         nameLabel.setStyle(
@@ -119,14 +115,14 @@ public class FavoritesController {
         nameLabel.setMaxWidth(240);
         nameLabel.setWrapText(true);
 
-// Артикул
+        // Артикул
         Label articleLabel = new Label("Арт: " + part.getArticle());
         articleLabel.setStyle(
                 "-fx-font-size: 13px;" +
                         "-fx-text-fill: #666;"
         );
 
-// Бренд
+        // Бренд
         Label brandLabel = new Label("Бренд: " + part.getBrand());
         brandLabel.setStyle(
                 "-fx-font-size: 13px;" +
@@ -136,7 +132,7 @@ public class FavoritesController {
         Region spacer = new Region();
         VBox.setVgrow(spacer, Priority.ALWAYS);
 
-// Цена
+        // Цена (с учётом возможной скидки)
         HBox priceBox = new HBox(8);
         priceBox.setAlignment(Pos.CENTER_LEFT);
 
@@ -176,7 +172,7 @@ public class FavoritesController {
             priceBox.getChildren().add(priceLabel);
         }
 
-// Кнопки
+        // Кнопки
         HBox buttonsBox = new HBox(10);
         buttonsBox.setAlignment(Pos.CENTER);
 
@@ -190,7 +186,7 @@ public class FavoritesController {
 
         buttonsBox.getChildren().addAll(openButton, removeButton);
 
-// наполняем карточку
+        // Наполнение карточки
         card.getChildren().addAll(
                 nameLabel,
                 articleLabel,
@@ -199,9 +195,7 @@ public class FavoritesController {
                 priceBox,
                 buttonsBox
         );
-
         card.setOnMouseClicked(e -> openProduct(part));
-
         return card;
     }
 
@@ -214,10 +208,8 @@ public class FavoritesController {
         SceneNavigator.goToProduct(part);
     }
 
-
     @FXML
     private void goBack() {
-        System.out.println("← Возврат на главную");
         SceneNavigator.goToMain();
     }
 }

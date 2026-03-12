@@ -48,8 +48,6 @@ public class MainController {
             addAdminButton();
         }
 
-        System.out.println("Loaded " + partsService.getCategories().size() + " categories");
-        System.out.println("Loaded " + partsService.getParts().size() + " products");
     }
 
     private void addAdminButton() {
@@ -113,8 +111,6 @@ public class MainController {
                 && authService.getCurrentUser() != null
                 && authService.getCurrentUser().isAdmin()) {
             AdminSceneNavigator.goToAdminPanel();
-        } else {
-            System.out.println("Нет прав администратора");
         }
     }
 

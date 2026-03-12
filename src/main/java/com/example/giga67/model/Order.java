@@ -11,11 +11,6 @@ public class Order {
     private String status;
     private double totalPrice;
     private List<CartItem> items;
-    // Пустой конструктор
-    public Order() {
-        this.createdAt = LocalDateTime.now();
-        this.status = "pending";
-    }
 
     public Order(String id, String userId, List<CartItem> items, double totalPrice, LocalDateTime createdAt, String status) {
         this.id = id;
@@ -29,51 +24,24 @@ public class Order {
     public String getId() {
         return id;
     }
-
     public void setId(String id) {
         this.id = id;
     }
-
     public String getUserId() {
         return userId;
     }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
     public String getStatus() {
         return status;
     }
-
     public void setStatus(String status) {
         this.status = status;
     }
-
     public double getTotalPrice() {
         return totalPrice;
     }
-
-    public void setTotalPrice(double totalPrice) {
-        this.totalPrice = totalPrice;
-    }
-
     public List<CartItem> getItems() {
         return items;
     }
-
-    public void setItems(List<CartItem> items) {
-        this.items = items;
-    }
-
     public String getFormattedDate() {
         if (createdAt != null) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");

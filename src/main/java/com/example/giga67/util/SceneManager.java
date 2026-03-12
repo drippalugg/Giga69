@@ -2,9 +2,7 @@ package com.example.giga67.util;
 
 import com.example.giga67.MainApp;
 import com.example.giga67.controller.CategoryController;
-import com.example.giga67.controller.ProductController;
 import com.example.giga67.model.Category;
-import com.example.giga67.model.Part;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -12,7 +10,7 @@ import javafx.scene.Scene;
 public class SceneManager {
 
     public static void goToMain() {
-        loadScene("/com/example/giga67/view/main.fxml", "MasterParts - Энгельс", 1280, 800);
+        loadScene("/com/example/giga67/view/main.fxml", "MasterParts", 1280, 800);
     }
 
     public static void goToCategory(Category category) {
@@ -34,39 +32,6 @@ public class SceneManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public static void goToProduct(Part part) {
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    SceneManager.class.getResource("/com/example/giga67/view/product.fxml")
-            );
-            Parent root = loader.load();
-
-            ProductController controller = loader.getController();
-            controller.setProduct(part);
-
-            Scene scene = new Scene(root);
-            addCSS(scene);
-
-            MainApp.getPrimaryStage().setScene(scene);
-            MainApp.getPrimaryStage().setTitle("MasterParts - " + part.getName());
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void goToCart() {
-        loadScene("/com/example/giga67/view/cart.fxml", "MasterParts - Корзина", 1280, 800);
-    }
-
-    public static void goToLogin() {
-        loadScene("/com/example/giga67/view/login.fxml", "MasterParts - Вход", 600, 700);
-    }
-
-    public static void goToProfile() {
-        loadScene("/com/example/giga67/view/profile.fxml", "MasterParts - Профиль", 800, 600);
     }
 
     private static void loadScene(String fxmlPath, String title, int width, int height) {

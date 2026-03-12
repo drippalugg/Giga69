@@ -18,7 +18,6 @@ public class ProfileController {
     public void initialize() {
         authService = SupabaseAuthService.getInstance();
         loadUserData();
-        System.out.println("ProfileController initialized!");
     }
 
     private void loadUserData() {
@@ -31,7 +30,6 @@ public class ProfileController {
             if (emailField != null) {
                 emailField.setText(user.getEmail());
             }
-            System.out.println("Загружены данные пользователя: " + user.getName());
         } else {
             if (nameField != null) {
                 nameField.setText("Гость");

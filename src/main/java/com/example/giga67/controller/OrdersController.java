@@ -31,8 +31,6 @@ public class OrdersController {
 
         setupOrdersListView();
         loadOrders();
-
-        System.out.println("OrdersController initialized!");
     }
 
     private void setupOrdersListView() {

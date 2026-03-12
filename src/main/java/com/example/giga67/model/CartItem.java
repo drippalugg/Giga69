@@ -12,35 +12,19 @@ public class CartItem {
     public Part getPart() {
         return part;
     }
-
-    public void setPart(Part part) {
-        this.part = part;
-    }
-
     public int getQuantity() {
         return quantity;
     }
-
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
-
     public double getTotalPrice() {
         if (part == null) {
             return 0.0;
         }
-        return ((double) part.getPrice()) * quantity;
+        return part.getPrice() * quantity;
     }
 
-    public double getTotalOldPrice() {
-        if (part == null) {
-            return 0.0;
-        }
-        if (part.hasDiscount()) {
-            return ((double) part.getOldPrice()) * quantity;
-        }
-        return getTotalPrice();
-    }
     @Override
     public String toString() {
         if (part == null) {

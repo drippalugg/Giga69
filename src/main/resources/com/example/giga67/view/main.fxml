@@ -7,7 +7,7 @@
             fx:controller="com.example.giga67.controller.MainController"
             styleClass="root">
 
-    <!-- Header -->
+    <!-- Голова -->
     <top>
         <HBox alignment="CENTER_LEFT" spacing="20" styleClass="header-top">
             <padding>
@@ -37,7 +37,7 @@
         </HBox>
     </top>
 
-    <!-- Content -->
+    <!-- Содержимое -->
     <center>
         <ScrollPane fitToWidth="true" styleClass="content-scroll">
             <VBox spacing="30" alignment="TOP_CENTER">
@@ -45,7 +45,7 @@
                     <Insets top="20" right="30" bottom="20" left="30"/>
                 </padding>
 
-                <!-- Search Section -->
+                <!-- Секция поиска -->
                 <VBox spacing="25" alignment="CENTER" styleClass="search-section">
                     <padding>
                         <Insets top="20" right="20" bottom="20" left="20"/>

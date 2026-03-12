@@ -7,7 +7,7 @@
             fx:controller="com.example.giga67.controller.ProfileController"
             styleClass="root">
 
-    <!-- Header -->
+    <!-- Голова -->
     <top>
         <HBox alignment="CENTER_LEFT" spacing="20" styleClass="header-top">
             <padding>
@@ -23,7 +23,7 @@
         </HBox>
     </top>
 
-    <!-- Content -->
+    <!-- Содержимое -->
     <center>
         <VBox spacing="30" alignment="CENTER" styleClass="profile-container">
             <padding>

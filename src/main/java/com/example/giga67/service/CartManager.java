@@ -29,8 +29,6 @@ public class CartManager {
         this.gson = new Gson();
         this.cartItems = FXCollections.observableArrayList();
         this.favorites = FXCollections.observableArrayList();
-
-        // 🔥 НЕ ЗАГРУЖАЕМ ЗДЕСЬ! Загрузим после входа
     }
 
     public static CartManager getInstance() {
@@ -40,19 +38,16 @@ public class CartManager {
         return instance;
     }
 
-    // ==================== ЗАГРУЗКА ИЗ SUPABASE ====================
+    // ---------------------------- Загрузка из Supabase ----------------------------
 
     public void loadData() {
         User user = authService.getCurrentUser();
 
         if (user == null) {
-            System.out.println("⚠️ Пользователь не авторизован, очищаем данные");
             cartItems.clear();
             favorites.clear();
             return;
         }
-
-        System.out.println("📡 Загрузка данных для пользователя: " + user.getEmail());
         loadCartFromSupabase(user.getId());
         loadFavoritesFromSupabase(user.getId());
     }
@@ -77,11 +72,8 @@ public class CartManager {
                         cartItems.add(new CartItem(part, quantity));
                     }
                 }
-
-                System.out.println("✅ Корзина загружена из Supabase (" + cartItems.size() + " товаров)");
             }
         } catch (Exception e) {
-            System.err.println("❌ Ошибка загрузки корзины: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -105,22 +97,18 @@ public class CartManager {
                         favorites.add(part);
                     }
                 }
-
-                System.out.println("✅ Избранное загружено из Supabase (" + favorites.size() + " товаров)");
             }
         } catch (Exception e) {
-            System.err.println("❌ Ошибка загрузки избранного: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    // ==================== КОРЗИНА ====================
+    // ---------------------------- КОРЗИНА ----------------------------
 
     public void addToCart(Part part, int quantity) {
         User user = authService.getCurrentUser();
 
         if (user == null) {
-            System.out.println("⚠️ Войдите, чтобы добавить в корзину");
             return;
         }
 
@@ -129,7 +117,6 @@ public class CartManager {
             if (item.getPart().getId() == part.getId()) {
                 item.setQuantity(item.getQuantity() + quantity);
                 updateCartInSupabase(user.getId(), part.getId(), item.getQuantity());
-                System.out.println("🛒 Обновлено количество: " + part.getName() + " → " + item.getQuantity());
                 return;
             }
         }
@@ -137,7 +124,6 @@ public class CartManager {
         // Добавляем новый товар
         cartItems.add(new CartItem(part, quantity));
         addCartToSupabase(user.getId(), part.getId(), quantity);
-        System.out.println("🛒 Товар добавлен в корзину: " + part.getName() + " x" + quantity);
     }
 
     public void removeItem(int partId) {
@@ -146,7 +132,6 @@ public class CartManager {
 
         cartItems.removeIf(item -> item.getPart().getId() == partId);
         deleteCartFromSupabase(user.getId(), partId);
-        System.out.println("🗑️ Товар удалён из корзины (ID: " + partId + ")");
     }
 
     public void updateQuantity(Part part, int newQuantity) {
@@ -162,7 +147,6 @@ public class CartManager {
             if (item.getPart().getId() == part.getId()) {
                 item.setQuantity(newQuantity);
                 updateCartInSupabase(user.getId(), part.getId(), newQuantity);
-                System.out.println("🔄 Количество обновлено: " + part.getName() + " → " + newQuantity);
                 return;
             }
         }
@@ -174,7 +158,6 @@ public class CartManager {
 
         cartItems.clear();
         clearCartInSupabase(user.getId());
-        System.out.println("🗑️ Корзина очищена");
     }
 
     public List<CartItem> getItems() {
@@ -193,28 +176,18 @@ public class CartManager {
         return total;
     }
 
-    public int getTotalItems() {
-        int total = 0;
-        for (CartItem item : cartItems) {
-            total += item.getQuantity();
-        }
-        return total;
-    }
-
-    // ==================== ИЗБРАННОЕ ====================
+    // ---------------------------- ИЗБРАННОЕ ----------------------------
 
     public void addToFavorites(Part part) {
         User user = authService.getCurrentUser();
 
         if (user == null) {
-            System.out.println("⚠️ Войдите, чтобы добавить в избранное");
             return;
         }
 
         if (!isFavorite(part)) {
             favorites.add(part);
             addFavoriteToSupabase(user.getId(), part.getId());
-            System.out.println("💖 Товар добавлен в избранное: " + part.getName());
         }
     }
 
@@ -224,7 +197,6 @@ public class CartManager {
 
         favorites.removeIf(p -> p.getId() == part.getId());
         deleteFavoriteFromSupabase(user.getId(), part.getId());
-        System.out.println("💔 Товар удалён из избранного: " + part.getName());
     }
 
     public boolean isFavorite(Part part) {
@@ -235,7 +207,7 @@ public class CartManager {
         return favorites;
     }
 
-// ==================== SUPABASE ОПЕРАЦИИ ====================
+// ---------------------------- Supabase ----------------------------
 
     private void addCartToSupabase(String userId, int partId, int quantity) {
         try {
@@ -245,9 +217,7 @@ public class CartManager {
             );
             String token = authService.getAccessToken();
             HttpResponse<String> response = client.post("/rest/v1/cart", json, token);
-            System.out.println("💾 Товар добавлен в корзину (Supabase) - статус: " + response.statusCode());
         } catch (Exception e) {
-            System.err.println("❌ Ошибка добавления в корзину: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -261,9 +231,7 @@ public class CartManager {
             );
             String token = authService.getAccessToken();
             HttpResponse<String> response = client.patch(endpoint, json, token);
-            System.out.println("💾 Количество обновлено (Supabase) - статус: " + response.statusCode());
         } catch (Exception e) {
-            System.err.println("❌ Ошибка обновления корзины: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -276,9 +244,7 @@ public class CartManager {
             );
             String token = authService.getAccessToken();
             HttpResponse<String> response = client.delete(endpoint, token);
-            System.out.println("🗑️ Товар удалён из корзины (Supabase) - статус: " + response.statusCode());
         } catch (Exception e) {
-            System.err.println("❌ Ошибка удаления из корзины: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -288,9 +254,7 @@ public class CartManager {
             String endpoint = "/rest/v1/cart?user_id=eq." + userId;
             String token = authService.getAccessToken();
             HttpResponse<String> response = client.delete(endpoint, token);
-            System.out.println("🗑️ Корзина очищена (Supabase) - статус: " + response.statusCode());
         } catch (Exception e) {
-            System.err.println("❌ Ошибка очистки корзины: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -303,9 +267,7 @@ public class CartManager {
             );
             String token = authService.getAccessToken();
             HttpResponse<String> response = client.post("/rest/v1/favorites", json, token);
-            System.out.println("💖 Товар добавлен в избранное (Supabase) - статус: " + response.statusCode());
         } catch (Exception e) {
-            System.err.println("❌ Ошибка добавления в избранное: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -318,9 +280,7 @@ public class CartManager {
             );
             String token = authService.getAccessToken();
             HttpResponse<String> response = client.delete(endpoint, token);
-            System.out.println("💔 Товар удалён из избранного (Supabase) - статус: " + response.statusCode());
         } catch (Exception e) {
-            System.err.println("❌ Ошибка удаления из избранного: " + e.getMessage());
             e.printStackTrace();
         }
     }

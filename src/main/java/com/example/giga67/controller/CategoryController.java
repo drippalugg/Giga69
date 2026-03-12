@@ -31,7 +31,6 @@ public class CategoryController {
     public void initialize() {
         partsService = new PartsService();
         cartManager = CartManager.getInstance();
-        System.out.println("CategoryController initialized!");
     }
 
     public void setCategory(Category category) {
@@ -43,13 +42,12 @@ public class CategoryController {
     }
 
     public void setSearchQuery(String query) {
-        // query может быть просто текстом или строкой с параметрами вида:
-        // q=текст&min=100&max=500&discount=1
+        // Параметр поиска
         String titleText = "Результаты поиска";
 
         String searchText = extractParam(query, "q");
         if (searchText == null || searchText.isBlank()) {
-            // если параметра q нет — считаем, что вся строка это текст
+            // При отсутствии параметра засчитываем параметр как текст
             searchText = (query == null) ? "" : query;
         }
 
@@ -60,15 +58,15 @@ public class CategoryController {
             titleLabel.setText(titleText);
         }
 
-        // разбираем числа и скидку
+        // Разбор числа и скидки
         Double minPrice = parseDoubleOrNull(extractParam(query, "min"));
         Double maxPrice = parseDoubleOrNull(extractParam(query, "max"));
         boolean discountOnly = "1".equals(extractParam(query, "discount"));
 
-        // сначала обычный текстовый поиск по name/article/brand
+        // Вначале обычный текстовый поиск имени и т.д.
         ObservableList<Part> base = partsService.searchParts(searchText);
 
-        // затем фильтруем по цене и скидке
+        // После фильтрация по цене и скидке
         ObservableList<Part> filtered = base.filtered(part -> {
             double price = part.getPrice();
             if (minPrice != null && price < minPrice) return false;
@@ -80,6 +78,9 @@ public class CategoryController {
         loadProducts(filtered);
     }
 
+    // --------------- Вспомогательные методы парсинга параметров поиска --------------- \\
+
+    // Извлечение значения параметров имени из строки
     private String extractParam(String query, String name) {
         if (query == null) return null;
         String[] parts = query.split("&");
@@ -91,7 +92,7 @@ public class CategoryController {
         }
         return null;
     }
-
+    // Преобразование строки к double и возвращение null при ошибке
     private Double parseDoubleOrNull(String text) {
         if (text == null || text.isBlank()) return null;
         try {
@@ -100,7 +101,6 @@ public class CategoryController {
             return null;
         }
     }
-
 
     private void loadProducts(ObservableList<Part> products) {
         if (productsPane == null) {
@@ -121,8 +121,6 @@ public class CategoryController {
             VBox productCard = createProductCard(part);
             productsPane.getChildren().add(productCard);
         }
-
-        System.out.println("Загружено товаров: " + products.size());
     }
 
     private VBox createProductCard(Part part) {
@@ -244,17 +242,12 @@ public class CategoryController {
                 priceBox,
                 buttonsBox
         );
-
         card.setOnMouseClicked(e -> openProduct(part));
-
         return card;
     }
 
-
-
     private void addToCart(Part part) {
         cartManager.addToCart(part, 1);
-        System.out.println("Добавлено в корзину: " + part.getName());
     }
 
     private void toggleFavorite(Part part, Button button) {
@@ -268,19 +261,16 @@ public class CategoryController {
     }
 
     private void openProduct(Part part) {
-        System.out.println("Открытие товара: " + part.getName());
         SceneNavigator.goToProduct(part);
     }
 
     @FXML
     private void goBack() {
-        System.out.println("← Возврат на главную");
         SceneNavigator.goToMain();
     }
 
     @FXML
     private void openCart() {
-        System.out.println("Переход в корзину");
         SceneNavigator.goToCart();
     }
 }

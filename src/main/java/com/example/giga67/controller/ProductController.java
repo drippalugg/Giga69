@@ -37,8 +37,6 @@ public class ProductController {
         if (quantitySpinner != null) {
             quantitySpinner.setValueFactory(valueFactory);
         }
-
-        System.out.println("ProductController initialized!");
     }
 
     public void setProduct(Part part) {
@@ -148,7 +146,6 @@ public class ProductController {
         }
 
         cartManager.addToCart(currentPart, quantity);
-        System.out.println("Добавлено в корзину: " + currentPart.getName() + " x" + quantity);
         SceneNavigator.goToCart();
     }
 
@@ -161,10 +158,8 @@ public class ProductController {
 
         if (cartManager.isFavorite(currentPart)) {
             cartManager.removeFromFavorites(currentPart);
-            System.out.println("Удалено из избранного: " + currentPart.getName());
         } else {
             cartManager.addToFavorites(currentPart);
-            System.out.println("Добавлено в избранное: " + currentPart.getName());
         }
 
         updateFavoriteButton();

@@ -23,12 +23,11 @@ public class SceneNavigator {
             Parent root = loader.load();
             CategoryController controller = loader.getController();
             controller.setCategory(category);
-
             Scene scene = new Scene(root);
-            scene.setUserData(controller); // сохраняем контроллер
+            scene.setUserData(controller); // Cохраняем контроллер
             addCSS(scene);
             MainApp.getPrimaryStage().setScene(scene);
-            MainApp.getPrimaryStage().setTitle("MasterParts - " + category.getName());
+            MainApp.getPrimaryStage().setTitle(category.getName());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -46,12 +45,10 @@ public class SceneNavigator {
             Scene scene = new Scene(root);
             addCSS(scene);
             MainApp.getPrimaryStage().setScene(scene);
-            MainApp.getPrimaryStage().setTitle("MasterParts - " + query);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 
     public static void goToProduct(Part part) {
         try {

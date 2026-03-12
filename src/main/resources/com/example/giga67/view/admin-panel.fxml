@@ -38,10 +38,11 @@
                </TableView>
             </VBox>
          </Tab>
-         <!-- ТАБ КАТЕГОРИИ -->
+         <!-- Таб категорий -->
          <Tab text="Управление категориями" closable="false">
             <VBox spacing="15" style="-fx-padding: 20;">
-               <!-- КНОПКИ -->
+
+               <!-- Кнопки -->
                <HBox spacing="10" style="-fx-padding: 10; -fx-background-color: #ecf0f1; -fx-border-radius: 5;">
                   <Button fx:id="addCategoryBtn" text="Добавить категорию" style="-fx-padding: 10 20; -fx-background-color: #667EEA; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 12;" />
                   <Button fx:id="editCategoryBtn" text="Редактировать" style="-fx-padding: 10 20; -fx-background-color: #667EEA; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 12;" />

@@ -7,7 +7,7 @@
             fx:controller="com.example.giga67.controller.CartController"
             styleClass="root">
 
-    <!-- Header -->
+    <!-- Голова -->
     <top>
         <HBox alignment="CENTER_LEFT" spacing="20" styleClass="header-top">
             <padding>
@@ -19,21 +19,21 @@
         </HBox>
     </top>
 
-    <!-- Content -->
+    <!-- Содержимое -->
     <center>
         <VBox spacing="20" styleClass="cart-container">
             <padding>
                 <Insets top="30" right="30" bottom="30" left="30"/>
             </padding>
 
-            <!-- 🔥 StackPane для центрирования сообщения -->
+            <!-- StackPane для центрирования сообщения -->
             <StackPane VBox.vgrow="ALWAYS">
                 <!-- ListView для товаров -->
                 <ListView fx:id="cartListView"
                           styleClass="cart-list"
                           style="-fx-background-color: transparent;"/>
 
-                <!-- Центрированное сообщение о пустой корзине -->
+                <!-- Центрированное сообщение для пустой корзины -->
                 <Label fx:id="emptyLabel"
                        text="Корзина пуста"
                        styleClass="empty-message"

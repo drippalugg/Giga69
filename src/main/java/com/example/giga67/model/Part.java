@@ -12,7 +12,7 @@ public class Part {
     private String imageUrl;
     private String specifications;
 
-    // Конструктор с 7 параметрами
+    // Конструктор
     public Part(int id, String name, String article, String brand, double price, double oldPrice, int categoryId) {
         this.id = id;
         this.name = name;
@@ -23,7 +23,7 @@ public class Part {
         this.categoryId = categoryId;
     }
 
-    // Геттеры
+    // Геттеры/сеттеры
     public int getId() {
         return id;
     }
@@ -68,16 +68,8 @@ public class Part {
         this.description = description;
     }
 
-    public void setOldPrice(double oldPrice) {
-        this.oldPrice = oldPrice;
-    }
-
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
-    }
-
-    public void setSpecifications(String specifications) {
-        this.specifications = specifications;
     }
 
     public boolean hasDiscount() {

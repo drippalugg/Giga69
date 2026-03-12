@@ -10,7 +10,7 @@
             fx:controller="com.example.giga67.controller.ProductController"
             styleClass="root">
 
-    <!-- Header -->
+    <!-- Голова -->
     <top>
         <HBox alignment="CENTER_LEFT" spacing="20" styleClass="header-top">
             <padding>
@@ -22,7 +22,7 @@
         </HBox>
     </top>
 
-    <!-- Content -->
+    <!-- Содержимое -->
     <center>
         <ScrollPane fitToWidth="true" styleClass="content-scroll">
             <HBox spacing="50" alignment="CENTER">
@@ -30,14 +30,14 @@
                     <Insets top="50" right="50" bottom="50" left="50"/>
                 </padding>
 
-                <!-- Product Image -->
+                <!-- Фотка продукта -->
                 <VBox alignment="CENTER" styleClass="product-image-box">
                     <ImageView fx:id="productImageView" fitWidth="300" fitHeight="300" preserveRatio="true">
                         <Image url="@../../../placeholder.png"/>
                     </ImageView>
                 </VBox>
 
-                <!-- Product Info -->
+                <!-- Информация о товаре -->
                 <VBox spacing="20" prefWidth="500">
                     <Label fx:id="nameLabel" text="Название товара" styleClass="product-title"/>
                     <Label fx:id="brandLabel" text="Бренд:" styleClass="product-info"/>

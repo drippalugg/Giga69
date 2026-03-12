@@ -8,7 +8,7 @@
             fx:controller="com.example.giga67.controller.CategoryController"
             styleClass="root">
 
-    <!-- Header -->
+    <!-- Голова -->
     <top>
         <HBox alignment="CENTER_LEFT" spacing="20" styleClass="header-top">
             <padding>
@@ -27,7 +27,7 @@
         </HBox>
     </top>
 
-    <!-- Content -->
+    <!-- Содержимое -->
     <center>
         <ScrollPane fitToWidth="true" styleClass="content-scroll">
             <VBox spacing="20" alignment="TOP_CENTER">

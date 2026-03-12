@@ -27,7 +27,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
 import java.io.File;
 import java.net.http.HttpResponse;
 import java.util.Optional;
@@ -64,7 +63,7 @@ public class AdminPanelController {
     @FXML
     private Label categoryCountLabel;
 
-    // Заказы (новый функционал)
+    // Заказы
     @FXML
     private TableView<Order> ordersTable;
     @FXML
@@ -89,15 +88,21 @@ public class AdminPanelController {
     private PartsService partsService = new PartsService();
     @FXML
     public void initialize() {
+
+        // Настройка таблиц и кнопок для товаров и категорий
         setupProductsTable();
         setupCategoriesTable();
         setupProductsTab();
         setupCategoriesTab();
         loadData();
+
+        // Настройка таблицы заказов и загрузка заказов
         ordersService = new OrdersService();
         authService = SupabaseAuthService.getInstance();
         setupOrdersTable();
         loadOrders();
+
+        // Заполнение выпадающего списка категорий для выбора при создании/редактировании товара
         if (categoryComboBox != null) {
             categoryComboBox.setItems(partsService.getCategories());
             categoryComboBox.setCellFactory(cb -> new ListCell<>() {
@@ -117,9 +122,9 @@ public class AdminPanelController {
         }
     }
 
+    // -------------------- Заказы --------------------
 
-    // ==================== ЗАКАЗЫ ====================
-
+    // Настройка колонок таблицы заказов и выпадающего списка статуса в каждой строчке
     private void setupOrdersTable() {
         if (ordersTable == null) return;
 
@@ -146,11 +151,8 @@ public class AdminPanelController {
                     if (order == null) return;
 
                     String newStatus = combo.getValue();
-                    System.out.println("🧾 PATCH for order id=" + order.getId() + " status=" + newStatus);
-                    System.out.println("🧾 PATCH for order id=" + order.getId() + " newStatus=" + newStatus);
-
                     boolean ok = ordersService.updateOrderStatus(
-                            order.getId(),                 // тут uuid из id
+                            order.getId(),
                             newStatus,
                             authService.getAccessToken()
                     );
@@ -176,7 +178,7 @@ public class AdminPanelController {
         });
     }
 
-
+    // Загрузка всех заказов из сервиса и привязка к таблице
     private void loadOrders() {
         String token = authService.getAccessToken();
         ObservableList<Order> orders = ordersService.getAllOrders(token); // ← вот он, ObservableList<Order>
@@ -218,7 +220,7 @@ public class AdminPanelController {
 
         TableColumn<Part, String> imageCol = new TableColumn<>("Изображение");
         imageCol.setCellValueFactory(c -> new SimpleStringProperty(
-                c.getValue().getImageUrl() != null && !c.getValue().getImageUrl().isEmpty() ? "✅" : "❌"
+                c.getValue().getImageUrl() != null && !c.getValue().getImageUrl().isEmpty() ? "!" : "X"
         ));
         imageCol.setPrefWidth(100);
 
@@ -226,6 +228,7 @@ public class AdminPanelController {
         productsTable.setItems(productsList);
     }
 
+    // Создает колонки и привязывает ObservableList товаров к таблице
     @SuppressWarnings("unchecked")
     private void setupCategoriesTable() {
         TableColumn<Category, Integer> idCol = new TableColumn<>("ID");
@@ -244,8 +247,7 @@ public class AdminPanelController {
         categoriesTable.setItems(categoriesList);
     }
 
-    // Товары
-
+    // Вешает обработчики на внопки вкладки товаров
     private void setupProductsTab() {
         addProductBtn.setOnAction(e -> addProduct());
         editProductBtn.setOnAction(e -> editProduct());
@@ -253,10 +255,10 @@ public class AdminPanelController {
         refreshProductsBtn.setOnAction(e -> loadProducts());
     }
 
+    // Обработчик добавления нового товара (+Supabase)
     private void addProduct() {
         Dialog<Part> dialog = createProductDialog("Добавить товар", null);
         Optional<Part> result = dialog.showAndWait();
-
         result.ifPresent(part -> {
             try {
                 JsonObject json = new JsonObject();
@@ -291,7 +293,7 @@ public class AdminPanelController {
             }
         });
     }
-
+    // Обработчик редактирования выбранного товара
     private void editProduct() {
         Part selected = productsTable.getSelectionModel().getSelectedItem();
         if (selected == null) {
@@ -331,6 +333,7 @@ public class AdminPanelController {
         });
     }
 
+    // Обработчик удаления выбранного товара
     private void deleteProduct() {
         Part selected = productsTable.getSelectionModel().getSelectedItem();
         if (selected == null) {
@@ -342,14 +345,12 @@ public class AdminPanelController {
         confirm.setTitle("Удаление товара");
         confirm.setHeaderText("Удалить товар: " + selected.getName() + "?");
         confirm.setContentText("Это действие нельзя отменить.");
-
         confirm.showAndWait().ifPresent(btn -> {
             if (btn == ButtonType.OK) {
                 try {
                     if (selected.getImageUrl() != null && !selected.getImageUrl().isEmpty()) {
                         deleteImageFromStorage(selected.getImageUrl());
                     }
-
                     HttpResponse<String> response = client.delete(
                             "/rest/v1/parts?id=eq." + selected.getId()
                     );
@@ -367,6 +368,7 @@ public class AdminPanelController {
         });
     }
 
+    // Загрузка товаров
     private void loadProducts() {
         new Thread(() -> {
             try {
@@ -381,7 +383,6 @@ public class AdminPanelController {
                         if (obj.has("old_price") && !obj.get("old_price").isJsonNull()) {
                             oldPrice = obj.get("old_price").getAsDouble();
                         }
-
                         Part part = new Part(
                                 obj.get("id").getAsInt(),
                                 obj.get("name").getAsString(),
@@ -413,8 +414,7 @@ public class AdminPanelController {
         }).start();
     }
 
-    // Категории
-
+    // Вешает обработчики на кнопки вкладки категорий
     private void setupCategoriesTab() {
         addCategoryBtn.setOnAction(e -> addCategory());
         editCategoryBtn.setOnAction(e -> editCategory());
@@ -422,6 +422,7 @@ public class AdminPanelController {
         refreshCategoriesBtn.setOnAction(e -> loadCategories());
     }
 
+    // Добавление новой категории через диалог и post в Supa
     private void addCategory() {
         Dialog<Category> dialog = createCategoryDialog("Добавить категорию", null);
         Optional<Category> result = dialog.showAndWait();
@@ -445,6 +446,7 @@ public class AdminPanelController {
         });
     }
 
+    // Редактирование выбранной категории
     private void editCategory() {
         Category selected = categoriesTable.getSelectionModel().getSelectedItem();
         if (selected == null) {
@@ -478,6 +480,7 @@ public class AdminPanelController {
         });
     }
 
+    // Удаление выбранной категории
     private void deleteCategory() {
         Category selected = categoriesTable.getSelectionModel().getSelectedItem();
         if (selected == null) {
@@ -523,7 +526,6 @@ public class AdminPanelController {
                                 obj.get("icon").getAsString()
                         ));
                     }
-
                     Platform.runLater(() -> {
                         categoriesList.setAll(loaded);
                         categoryCountLabel.setText("Категорий: " + loaded.size());
@@ -552,7 +554,7 @@ public class AdminPanelController {
         }
 
         try {
-            // Генерируем уникальное имя файла: timestamp_originalname.ext
+            // Генерация уникального имя файла типа timestamp_originalname.ext
             String originalName = selectedFile.getName();
             String extension = originalName.contains(".")
                     ? originalName.substring(originalName.lastIndexOf("."))
@@ -582,7 +584,6 @@ public class AdminPanelController {
     private void deleteImageFromStorage(String imageUrl) {
         try {
             // Извлекаем путь файла из публичного URL
-            // Формат: .../storage/v1/object/public/product-images/parts/filename.jpg
             String marker = "/storage/v1/object/public/" + BUCKET_NAME + "/";
             int idx = imageUrl.indexOf(marker);
             if (idx >= 0) {
@@ -594,7 +595,6 @@ public class AdminPanelController {
     }
 
     // Диалоги
-
     private Dialog<Part> createProductDialog(String title, Part existing) {
         Dialog<Part> dialog = new Dialog<>();
         dialog.setTitle(title);
@@ -619,8 +619,6 @@ public class AdminPanelController {
         priceField.setPromptText("Цена");
         TextField oldPriceField = new TextField();
         oldPriceField.setPromptText("Старая цена (0 если нет)");
-        //TextField categoryIdField = new TextField();
-        //categoryIdField.setPromptText("ID категории");
         ComboBox<Category> categoryComboBox = new ComboBox<>();
         categoryComboBox.setPromptText("Категория");
         categoryComboBox.setItems(partsService.getCategories());
@@ -691,7 +689,7 @@ public class AdminPanelController {
             removeImageBtn.setVisible(false);
         });
 
-        // Заполняем поля при редактировании
+        // Заполнение поля при редактировании
         if (existing != null) {
             nameField.setText(existing.getName());
             articleField.setText(existing.getArticle());
@@ -718,7 +716,7 @@ public class AdminPanelController {
             }
         }
 
-        // Размещаем элементы в сетке
+        // Размещение элементов в сетке
         int row = 0;
         grid.add(new Label("Название:"), 0, row);
         grid.add(nameField, 1, row++);
@@ -736,7 +734,7 @@ public class AdminPanelController {
         grid.add(descriptionArea, 1, row++);
 
 
-        // Секция изображения
+        // Секция "Изображения"
         grid.add(new Separator(), 0, row++, 2, 1);
         grid.add(new Label("Изображение:"), 0, row);
 
@@ -761,12 +759,9 @@ public class AdminPanelController {
                             Double.parseDouble(oldPriceField.getText().trim());
                     Category selected = categoryComboBox.getValue();
                     if (selected == null) {
-                        // показать ошибку и выйти из void-метода
                         return null;
                     }
-                    int categoryId = selected.getId(); // и дальше как раньше
-
-
+                    int categoryId = selected.getId();
 
                     if (name.isEmpty() || article.isEmpty() || brand.isEmpty()) {
                         showError("Ошибка", "Заполните все обязательные поля.");
@@ -788,7 +783,6 @@ public class AdminPanelController {
             }
             return null;
         });
-
         return dialog;
     }
 
@@ -842,13 +836,15 @@ public class AdminPanelController {
         return dialog;
     }
 
-    // ==================== ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ ====================
+    // -------------------- Вспомогательные методы --------------------
 
+    // Загрузка товаров и категорий из SB в ObservableList
     private void loadData() {
         loadProducts();
         loadCategories();
     }
 
+    // Универсальный диалог информации
     private void showInfo(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
@@ -857,6 +853,7 @@ public class AdminPanelController {
         alert.showAndWait();
     }
 
+    // Универсальный диалог ошибки
     private void showError(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);

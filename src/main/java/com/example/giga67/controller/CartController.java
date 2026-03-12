@@ -17,7 +17,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +25,6 @@ public class CartController {
     @FXML private ListView<CartItem> cartListView;
     @FXML private Label totalLabel;
     @FXML private Label emptyLabel;
-    @FXML private StackPane cartContainer;
-
     private CartManager cartManager;
     private SupabaseAuthService authService;
     private OrdersService ordersService;
@@ -37,16 +34,14 @@ public class CartController {
         cartManager = CartManager.getInstance();
         authService = SupabaseAuthService.getInstance();
         ordersService = OrdersService.getInstance();
-
         setupCartListView();
         loadCart();
         updateTotal();
-
     }
 
+    // ---------------------- Экран корзины (отображение и изменение параметров товара в корзине) ----------------------
     private void setupCartListView() {
         cartListView.setStyle("-fx-background-color: transparent; -fx-background-insets: 0; -fx-padding: 0;");
-
         cartListView.setCellFactory(listView -> new ListCell<CartItem>() {
             @Override
             protected void updateItem(CartItem item, boolean empty) {
@@ -75,14 +70,13 @@ public class CartController {
 
         Part part = item.getPart();
 
-        // Картинка товара или эмодзи-подарок
+        // Картинка товара или заглушка
         ImageView imageView = new ImageView();
         imageView.setFitWidth(80);
         imageView.setFitHeight(80);
         imageView.setPreserveRatio(true);
 
         String imageUrl = part.getImageUrl();
-        System.out.println("cart imageUrl = " + imageUrl);
         if (imageUrl != null && !imageUrl.isEmpty()) {
             try {
                 imageView.setImage(new Image(imageUrl, 80, 80, true, true));
@@ -91,7 +85,7 @@ public class CartController {
                 imageView.setImage(null);
             }
         }
-        // если не смогли загрузить – покажем просто эмодзи в Label
+        // При неудачной загрузки изображении отображается заглушка
         Label iconLabel = new Label("🎁");
         iconLabel.setStyle("-fx-font-size: 36px;");
 
@@ -188,7 +182,7 @@ public class CartController {
             updateTotal();
         });
 
-        // если картинка есть – ставим imageView, иначе эмодзи
+        // При наличии изображения товара ставится imageView, иначе отображается заглушка
         if (imageView.getImage() != null) {
             mainBox.getChildren().addAll(imageView, infoBox, spacer, quantityBox, totalBox, removeBtn);
         } else {
@@ -199,13 +193,12 @@ public class CartController {
         return container;
     }
 
-
     private void loadCart() {
         List<CartItem> items = cartManager.getItems();
         cartListView.getItems().clear();
 
         if (items.isEmpty()) {
-            // 🔥 Показываем центрированное сообщение
+            // Отображение центрированного сообщения
             if (emptyLabel != null) {
                 emptyLabel.setText("🛒 Корзина пуста");
                 emptyLabel.setStyle(
@@ -273,8 +266,6 @@ public class CartController {
                 "pending"
         );
 
-        System.out.println("📦 Создание заказа: " + orderId);
-
         boolean success = ordersService.createOrder(
                 order,
                 authService.getCurrentUser().getId(),
@@ -302,21 +293,9 @@ public class CartController {
         if (cartManager.getItems().isEmpty()) {
             return;
         }
-
         cartManager.clear();
         loadCart();
         updateTotal();
-        System.out.println("🗑️ Корзина очищена");
-    }
-
-    @FXML
-    private void handleRemoveItem() {
-        CartItem selected = cartListView.getSelectionModel().getSelectedItem();
-        if (selected != null) {
-            cartManager.removeItem(selected.getPart().getId());
-            loadCart();
-            updateTotal();
-        }
     }
 
     private void showAlert(String title, String message, Alert.AlertType type) {
@@ -329,7 +308,6 @@ public class CartController {
 
     @FXML
     private void goBack() {
-        System.out.println("← Возврат на главную");
         SceneNavigator.goToMain();
     }
 }

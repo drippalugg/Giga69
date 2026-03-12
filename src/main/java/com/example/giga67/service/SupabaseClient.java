@@ -27,15 +27,7 @@ public class SupabaseClient {
         return instance;
     }
 
-    public String getSupabaseUrl() {
-        return supabaseUrl;
-    }
-
-    public String getSupabaseKey() {
-        return supabaseKey;
-    }
-
-    // ==================== REST API ====================
+    // -------------------- Rest API --------------------
 
     public HttpResponse<String> get(String endpoint) throws IOException, InterruptedException {
         return get(endpoint, null);
@@ -109,15 +101,7 @@ public class SupabaseClient {
         return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    // ==================== STORAGE API ====================
-
-    /**
-     * Загружает файл в Supabase Storage.
-     * @param bucketName имя бакета (например, "product-images")
-     * @param filePath путь к файлу в бакете (например, "parts/123.jpg")
-     * @param localFile путь к локальному файлу на диске
-     * @return HttpResponse с результатом загрузки
-     */
+    // -------------------- Хранилище API --------------------
     public HttpResponse<String> uploadFile(String bucketName, String filePath, Path localFile)
             throws IOException, InterruptedException {
 
@@ -139,9 +123,7 @@ public class SupabaseClient {
         return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    /**
-     * Обновляет (перезаписывает) файл в Supabase Storage.
-     */
+    // Обновляет или перезаписывает файл в хранилище БД
     public HttpResponse<String> updateFile(String bucketName, String filePath, Path localFile)
             throws IOException, InterruptedException {
 
@@ -163,9 +145,7 @@ public class SupabaseClient {
         return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    /**
-     * Удаляет файл из Supabase Storage.
-     */
+    // Удаляет файл из хранилища БД
     public HttpResponse<String> deleteFile(String bucketName, String filePath)
             throws IOException, InterruptedException {
 
@@ -179,9 +159,7 @@ public class SupabaseClient {
         return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    /**
-     * Возвращает публичный URL файла из Supabase Storage.
-     */
+    //Возвращает публичный URL файла из хранилища БД
     public String getPublicUrl(String bucketName, String filePath) {
         return supabaseUrl + "/storage/v1/object/public/" + bucketName + "/" + filePath;
     }

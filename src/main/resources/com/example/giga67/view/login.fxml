@@ -7,7 +7,7 @@
             fx:controller="com.example.giga67.controller.LoginController"
             styleClass="root">
 
-    <!-- Header -->
+    <!-- Голова -->
     <top>
         <HBox alignment="CENTER_LEFT" spacing="20" styleClass="header-top">
             <padding>
@@ -16,7 +16,7 @@
         </HBox>
     </top>
 
-    <!-- Content -->
+    <!-- Содержимое -->
     <center>
         <VBox spacing="30" alignment="CENTER" styleClass="login-container">
             <padding>
@@ -34,7 +34,7 @@
                   maxWidth="400"
                   style="-fx-background-color: white; -fx-background-radius: 16; -fx-padding: 40; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 15, 0, 0, 4);">
 
-                <!-- Email -->
+                <!-- Почта -->
                 <VBox spacing="8">
                     <Label text="Email" styleClass="form-label"/>
                     <TextField fx:id="emailField"
@@ -50,7 +50,7 @@
                                    styleClass="form-input"/>
                 </VBox>
 
-                <!-- Имя (для регистрации) -->
+                <!-- Имя для регистрации -->
                 <VBox fx:id="registerBox" spacing="8" visible="false" managed="false">
                     <Label text="Имя" styleClass="form-label"/>
                     <TextField fx:id="nameField"
@@ -58,12 +58,10 @@
                                styleClass="form-input"/>
                 </VBox>
 
-                <!-- Запомнить меня -->
+                <!-- Кнопка "Запомнить меня" -->
                 <HBox spacing="10" alignment="CENTER_LEFT">
                     <CheckBox fx:id="rememberMeCheckBox" text="Запомнить меня"/>
                 </HBox>
-
-
 
                 <!-- Ошибка -->
                 <Label fx:id="errorLabel"
@@ -87,7 +85,7 @@
                         visible="false"
                         managed="false"/>
 
-                <!-- Переключение режима -->
+                <!-- Переключение режима авторизации -->
                 <HBox spacing="5" alignment="CENTER">
                     <Label fx:id="toggleLabel"
                            text="Нет аккаунта?"
