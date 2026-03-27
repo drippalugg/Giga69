@@ -176,11 +176,11 @@ public class FavoritesController {
         HBox buttonsBox = new HBox(10);
         buttonsBox.setAlignment(Pos.CENTER);
 
-        Button removeButton = new Button("Убрать из избранного");
+        Button removeButton = new Button("Убрать");
         removeButton.getStyleClass().add("secondary-button");
         removeButton.setOnAction(e -> removeFromFavorites(part));
 
-        Button openButton = new Button("Открыть");
+        Button openButton = new Button("Подробнее");
         openButton.getStyleClass().add("primary-button");
         openButton.setOnAction(e -> openProduct(part));
 

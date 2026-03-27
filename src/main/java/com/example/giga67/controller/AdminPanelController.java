@@ -181,7 +181,7 @@ public class AdminPanelController {
     // Загрузка всех заказов из сервиса и привязка к таблице
     private void loadOrders() {
         String token = authService.getAccessToken();
-        ObservableList<Order> orders = ordersService.getAllOrders(token); // ← вот он, ObservableList<Order>
+        ObservableList<Order> orders = ordersService.getAllOrders(token);
         ordersTable.setItems(orders);
     }
 
@@ -220,7 +220,7 @@ public class AdminPanelController {
 
         TableColumn<Part, String> imageCol = new TableColumn<>("Изображение");
         imageCol.setCellValueFactory(c -> new SimpleStringProperty(
-                c.getValue().getImageUrl() != null && !c.getValue().getImageUrl().isEmpty() ? "!" : "X"
+                c.getValue().getImageUrl() != null && !c.getValue().getImageUrl().isEmpty() ? "✔" : "❌"
         ));
         imageCol.setPrefWidth(100);
 

@@ -75,7 +75,7 @@ public class MainController {
                     "-fx-font-weight: bold; -fx-cursor: hand;" + "-fx-translate-y: -10;");
             adminBtn.setOnAction(e -> handleAdminPanel());
 
-            // способ 1: если loginButton есть – добавляем рядом с ним
+            // План А: если loginButton есть – добавляем рядом с ним
             if (loginButton != null && loginButton.getParent() != null) {
                 var parent = loginButton.getParent();
 
@@ -88,7 +88,7 @@ public class MainController {
                 }
             }
 
-            // способ 2: если есть categoriesPane – вставляем над ним
+            // План Б: если есть categoriesPane – вставляем над ним
             if (categoriesPane != null && categoriesPane.getParent() != null) {
                 var parent = categoriesPane.getParent();
                 if (parent instanceof VBox vbox) {
@@ -150,19 +150,15 @@ public class MainController {
         nameLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 
         card.getChildren().addAll(iconLabel, nameLabel);
-
         card.setOnMouseEntered(e -> {
             card.setStyle("-fx-background-color: #EEEEEE; -fx-background-radius: 10; -fx-cursor: hand;");
         });
-
         card.setOnMouseExited(e -> {
             card.setStyle("-fx-background-color: #F5F5F5; -fx-background-radius: 10; -fx-cursor: hand;");
         });
-
         card.setOnMouseClicked(e -> {
             SceneNavigator.goToCategory(category);
         });
-
         return card;
     }
 
@@ -191,7 +187,7 @@ public class MainController {
             dialog.initModality(Modality.WINDOW_MODAL);
             dialog.setTitle("Фильтры");
 
-            // создаём сцену ОДИН раз и сразу подключаем styles.css
+            // Создаём сцену один раз и сразу подключаем стили
             Scene scene = new Scene(root);
             var cssUrl = getClass().getResource("/com/example/giga67/css/styles.css");
             if (cssUrl != null) {
@@ -204,10 +200,10 @@ public class MainController {
 
             FiltersController.FilterData data = controller.getResult();
             if (data == null) {
-                return; // просто закрыли окно
+                return;
             }
 
-            // базовый текст запроса
+            // Базовый текст запроса
             String baseQuery = "";
             if (searchField != null && searchField.getText() != null) {
                 baseQuery = searchField.getText().trim();
@@ -262,10 +258,9 @@ public class MainController {
     private void handleLogin() {
 
         if (authService.isLoggedIn()) {
-            // Если пользователь залогинен - идём в профиль
             SceneNavigator.goToProfile();
         } else {
-            // Если не залогинен - идём на экран входа
+            // Если не залогинен идём на экран входа
             SceneNavigator.goToLogin();
         }
     }

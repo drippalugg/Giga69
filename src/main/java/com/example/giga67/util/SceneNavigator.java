@@ -62,14 +62,14 @@ public class SceneNavigator {
             Scene scene = new Scene(root);
             addCSS(scene);
             MainApp.getPrimaryStage().setScene(scene);
-            MainApp.getPrimaryStage().setTitle("MasterParts - " + part.getName());
+            MainApp.getPrimaryStage().setTitle("MasterParts");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public static void goToCart() {
-        loadScene("/com/example/giga67/view/cart.fxml", "MasterPart", 1280, 900);
+        loadScene("/com/example/giga67/view/cart.fxml", "MasterParts", 1280, 900);
     }
 
     public static void goToLogin() {

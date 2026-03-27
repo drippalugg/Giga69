@@ -123,7 +123,7 @@ public class SupabaseClient {
         return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    // Обновляет или перезаписывает файл в хранилище БД
+    // Обновляем или перезаписываем файл в хранилище БД
     public HttpResponse<String> updateFile(String bucketName, String filePath, Path localFile)
             throws IOException, InterruptedException {
 

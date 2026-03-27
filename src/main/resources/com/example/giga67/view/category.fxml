@@ -29,7 +29,7 @@
 
     <!-- Содержимое -->
     <center>
-        <ScrollPane fitToWidth="true" styleClass="content-scroll">
+        <ScrollPane hbarPolicy="NEVER" vbarPolicy="NEVER">
             <VBox spacing="20" alignment="TOP_CENTER">
                 <padding>
                     <Insets top="30" right="30" bottom="30" left="30"/>

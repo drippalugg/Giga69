@@ -141,7 +141,7 @@ public class CartController {
 
         totalBox.getChildren().add(totalPriceLabel);
 
-        Button removeBtn = new Button("🗑️");
+        Button removeBtn = new Button("❌");
         removeBtn.setStyle(
                 "-fx-background-color: #FFE5E5; " +
                         "-fx-text-fill: #FF4757; " +
@@ -200,7 +200,7 @@ public class CartController {
         if (items.isEmpty()) {
             // Отображение центрированного сообщения
             if (emptyLabel != null) {
-                emptyLabel.setText("🛒 Корзина пуста");
+                emptyLabel.setText("Корзина пуста");
                 emptyLabel.setStyle(
                         "-fx-font-size: 24px; " +
                                 "-fx-font-weight: bold; " +

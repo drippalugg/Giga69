@@ -731,3 +731,15 @@
     -fx-padding: 8 20;
     -fx-background-radius: 10;
 }
+
+/* -------------------- Убрал скролл Заказов -------------------- */
+
+.cart-list .scroll-bar:vertical {
+    -fx-pref-width: 0;
+    -fx-opacity: 0;
+}
+
+.cart-list .scroll-bar:horizontal {
+    -fx-pref-height: 0;
+    -fx-opacity: 0;
+}

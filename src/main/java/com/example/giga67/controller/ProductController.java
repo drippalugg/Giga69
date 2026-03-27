@@ -46,7 +46,6 @@ public class ProductController {
 
     private void displayProduct() {
         if (currentPart == null) {
-            System.err.println("currentPart is null!");
             return;
         }
 
@@ -95,7 +94,7 @@ public class ProductController {
                     currentPart.getDescription() : "Описание товара");
         }
 
-        // Загрузка изображения товара (пока не используется)
+        // Загрузка изображения товара
         if (productImageView != null) {
             String imageUrl = currentPart.getImageUrl();
             if (imageUrl != null && !imageUrl.isEmpty()) {
@@ -103,7 +102,6 @@ public class ProductController {
                     Image image = new Image(imageUrl, true);
                     productImageView.setImage(image);
                 } catch (Exception e) {
-                    System.err.println("⚠Ошибка загрузки изображения: " + e.getMessage());
                 }
             }
         }
@@ -136,7 +134,6 @@ public class ProductController {
     @FXML
     private void addToCart() {
         if (currentPart == null) {
-            System.err.println("Cannot add to cart: currentPart is null");
             return;
         }
 
@@ -152,7 +149,6 @@ public class ProductController {
     @FXML
     private void toggleFavorite() {
         if (currentPart == null) {
-            System.err.println("Cannot toggle favorite: currentPart is null");
             return;
         }
 

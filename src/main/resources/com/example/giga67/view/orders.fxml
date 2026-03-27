@@ -29,9 +29,9 @@
             <!--  StackPane для центрирования сообщения -->
             <StackPane VBox.vgrow="ALWAYS">
                 <!-- ListView для заказов -->
-                <ListView fx:id="ordersListView"
-                          styleClass="cart-list"
-                          style="-fx-background-color: transparent;"/>
+                <ListView fx:id="ordersListView" styleClass="cart-list"
+                          style="-fx-background-color: transparent"
+                          VBox.vgrow="ALWAYS"/>
 
                 <!-- Центрированное сообщение о пустых заказах -->
                 <Label fx:id="emptyLabel"

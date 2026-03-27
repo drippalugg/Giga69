@@ -11,6 +11,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -30,6 +31,7 @@ public class OrdersController {
         ordersService = OrdersService.getInstance();
 
         setupOrdersListView();
+        ordersListView.setStyle("-fx-background-color: transparent; -fx-background-insets: 0; -fx-padding: 0");
         loadOrders();
     }
 
@@ -141,32 +143,24 @@ public class OrdersController {
         );
 
         totalBox.getChildren().add(totalLabel);
-
         mainBox.getChildren().addAll(headerBox, itemsBox, totalBox);
         container.getChildren().add(mainBox);
-
         return container;
     }
 
     private String getStatusColor(String status) {
-        switch (status) {
-            case "pending":
-                return "#FFA726"; // Оранжевый
-            case "processing":
-                return "#42A5F5"; // Синий
-            case "shipped":
-                return "#AB47BC"; // Фиолетовый
-            case "delivered":
-                return "#66BB6A"; // Зелёный
-            case "cancelled":
-                return "#EF5350"; // Красный
-            default:
-                return "#9E9E9E"; // Серый
-        }
+        if (status == null) return "#9E9E9E";
+        return switch (status) {
+            case "new"        -> "#FFA726"; // Оранжевый
+            case "processing" -> "#42A5F5"; // Синий
+            case "shipped"    -> "#AB47BC"; // Фиолетовый
+            case "done"       -> "#66BB6A"; // Зелёный
+            case "canceled"   -> "#EF5350"; // Красный
+            default           -> "#9E9E9E"; // Серый
+        };
     }
 
     private void loadOrders() {
-
         if (!authService.isLoggedIn()) {
             if (emptyLabel != null) {
                 emptyLabel.setText("Войдите в систему\nдля просмотра заказов");
@@ -192,7 +186,6 @@ public class OrdersController {
 
         if (ordersListView != null) {
             ordersListView.getItems().clear();
-
             if (orders.isEmpty()) {
                 if (emptyLabel != null) {
                     emptyLabel.setText("Заказов нет");
@@ -214,7 +207,6 @@ public class OrdersController {
             }
         }
     }
-
     @FXML
     private void goBack() {
         SceneNavigator.goToMain();

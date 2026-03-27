@@ -216,7 +216,7 @@ public class CategoryController {
         HBox buttonsBox = new HBox(10);
         buttonsBox.setAlignment(Pos.CENTER);
 
-        Button cartButton = new Button("🛒 В корзину");
+        Button cartButton = new Button("В корзину");
         cartButton.getStyleClass().add("primary-button");
         cartButton.setMaxWidth(Double.MAX_VALUE);
         cartButton.setOnAction(e -> addToCart(part));

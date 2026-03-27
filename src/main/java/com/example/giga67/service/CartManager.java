@@ -103,7 +103,7 @@ public class CartManager {
         }
     }
 
-    // ---------------------------- КОРЗИНА ----------------------------
+    // ---------------------------- Корзина ----------------------------
 
     public void addToCart(Part part, int quantity) {
         User user = authService.getCurrentUser();
@@ -176,7 +176,7 @@ public class CartManager {
         return total;
     }
 
-    // ---------------------------- ИЗБРАННОЕ ----------------------------
+    // ---------------------------- Избранное ----------------------------
 
     public void addToFavorites(Part part) {
         User user = authService.getCurrentUser();

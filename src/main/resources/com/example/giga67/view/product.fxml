@@ -56,11 +56,9 @@
                            styleClass="product-description"/>
 
                     <Separator/>
-
                     <Label text="Характеристики:" styleClass="section-subtitle"/>
                     <Label fx:id="specificationsLabel" text="" wrapText="true"
                            styleClass="product-description" visible="false" managed="false"/>
-
                     <HBox spacing="15" alignment="CENTER_LEFT">
                         <Label text="Количество:" styleClass="product-info"/>
                         <Spinner fx:id="quantitySpinner" prefWidth="100"/>
@@ -69,7 +67,7 @@
                     <HBox spacing="15">
                         <Button text="Добавить в корзину" onAction="#addToCart"
                                 styleClass="primary-button-large" prefWidth="300"/>
-                        <Button fx:id="favoriteButton" text="🤍 В избранное" onAction="#toggleFavorite"
+                        <Button fx:id="favoriteButton" text="В избранное" onAction="#toggleFavorite"
                                 styleClass="secondary-button"/>
                     </HBox>
                 </VBox>

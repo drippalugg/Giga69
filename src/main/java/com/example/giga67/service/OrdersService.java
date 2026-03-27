@@ -107,7 +107,6 @@ public class OrdersService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return orders;
     }
 
@@ -124,8 +123,8 @@ public class OrdersService {
                 for (int i = 0; i < jsonArray.size(); i++) {
                     JsonObject o = jsonArray.get(i).getAsJsonObject();
 
-                    String id = o.get("id").getAsString();                    // uuid
-                    String userId = o.get("user_id").getAsString();           // uuid
+                    String id = o.get("id").getAsString();
+                    String userId = o.get("user_id").getAsString();
 
                     double total = o.has("total_price") && !o.get("total_price").isJsonNull()
                             ? o.get("total_price").getAsDouble()
@@ -152,14 +151,12 @@ public class OrdersService {
                             createdAt,
                             status
                     );
-
                     orders.add(order);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return orders;
     }
 

@@ -110,7 +110,7 @@ public class SupabaseAuthService {
     }
     private void createProfileIfNotExists(String userId, String email, String name) {
         try {
-            // проверяем, есть ли запись в profiles
+            // Проверяем есть ли запись в profiles
             HttpResponse<String> check = client.get(
                     "/rest/v1/profiles?id=eq." + userId + "&select=id",
                     accessToken
@@ -147,10 +147,8 @@ public class SupabaseAuthService {
                     gson.toJson(body),
                     accessToken
             );
-            System.out.println("📝 updateProfileName status: " + resp.statusCode());
             return resp.statusCode() == 200 || resp.statusCode() == 204;
         } catch (Exception e) {
-            System.err.println("❌ updateProfileName error: " + e.getMessage());
             e.printStackTrace();
             return false;
         }
@@ -159,12 +157,10 @@ public class SupabaseAuthService {
     public void logout() {
         currentUser = null;
         accessToken = null;
-        System.out.println("👋 Пользователь вышел");
     }
 
     public boolean isLoggedIn() {
         boolean loggedIn = currentUser != null;
-        System.out.println("🔍 isLoggedIn проверка: " + loggedIn);
         return loggedIn;
     }
 
