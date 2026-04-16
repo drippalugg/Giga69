@@ -17,7 +17,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
-
 import java.util.List;
 
 public class ProductController {
@@ -487,7 +486,7 @@ public class ProductController {
     private void updateFavoriteButton() {
         if (favoriteButton != null && currentPart != null) {
             if (cartManager.isFavorite(currentPart)) {
-                favoriteButton.setText("💖 В избранном");
+                favoriteButton.setText("Есть в избранном");
             } else {
                 favoriteButton.setText("💖 В избранное");
             }
