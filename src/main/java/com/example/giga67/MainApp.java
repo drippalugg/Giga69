@@ -9,7 +9,6 @@ import java.net.URL;
 
 public class MainApp extends Application {
     private static Stage primaryStage;
-
     @Override
     public void start(Stage stage) {
         try {
@@ -31,7 +30,6 @@ public class MainApp extends Application {
             if (cssUrl != null) {
                 scene.getStylesheets().add(cssUrl.toExternalForm());
             }
-
             primaryStage.setScene(scene);
             primaryStage.show();
 

@@ -15,8 +15,8 @@ public class SupabaseClient {
     private final HttpClient httpClient;
 
     private SupabaseClient() {
-        this.supabaseUrl = "https://uarcxsotrpdnwabpgjhp.supabase.co";
-        this.supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhcmN4c290cnBkbndhYnBnamhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI4NjU5OTMsImV4cCI6MjA3ODQ0MTk5M30.nR2JZDVWD3wtdVYehE6ps6x35NClNBw1niNEA42qKGc";
+        this.supabaseUrl = "https://mgklafqwfppkmcawjwuc.supabase.co";
+        this.supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1na2xhZnF3ZnBwa21jYXdqd3VjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0OTY4ODMsImV4cCI6MjA3OTA3Mjg4M30.ScQU-AIQvmmNZ77tExaWbfLyHYJV-dvvy3fZzbK_Bao";
         this.httpClient = HttpClient.newHttpClient();
     }
 
@@ -104,6 +104,12 @@ public class SupabaseClient {
     // -------------------- Хранилище API --------------------
     public HttpResponse<String> uploadFile(String bucketName, String filePath, Path localFile)
             throws IOException, InterruptedException {
+        return uploadFile(bucketName, filePath, localFile, null);
+    }
+
+    public HttpResponse<String> uploadFile(String bucketName, String filePath, Path localFile, String userToken)
+            throws IOException, InterruptedException {
+        String authToken = (userToken != null && !userToken.isEmpty()) ? userToken : supabaseKey;
 
         String contentType = Files.probeContentType(localFile);
         if (contentType == null) {
@@ -115,7 +121,7 @@ public class SupabaseClient {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(supabaseUrl + "/storage/v1/object/" + bucketName + "/" + filePath))
                 .header("apikey", supabaseKey)
-                .header("Authorization", "Bearer " + supabaseKey)
+                .header("Authorization", "Bearer " + authToken)
                 .header("Content-Type", contentType)
                 .POST(HttpRequest.BodyPublishers.ofByteArray(fileBytes))
                 .build();
@@ -123,9 +129,14 @@ public class SupabaseClient {
         return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    // Обновляем или перезаписываем файл в хранилище БД
     public HttpResponse<String> updateFile(String bucketName, String filePath, Path localFile)
             throws IOException, InterruptedException {
+        return updateFile(bucketName, filePath, localFile, null);
+    }
+
+    public HttpResponse<String> updateFile(String bucketName, String filePath, Path localFile, String userToken)
+            throws IOException, InterruptedException {
+        String authToken = (userToken != null && !userToken.isEmpty()) ? userToken : supabaseKey;
 
         String contentType = Files.probeContentType(localFile);
         if (contentType == null) {
@@ -137,7 +148,7 @@ public class SupabaseClient {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(supabaseUrl + "/storage/v1/object/" + bucketName + "/" + filePath))
                 .header("apikey", supabaseKey)
-                .header("Authorization", "Bearer " + supabaseKey)
+                .header("Authorization", "Bearer " + authToken)
                 .header("Content-Type", contentType)
                 .PUT(HttpRequest.BodyPublishers.ofByteArray(fileBytes))
                 .build();
@@ -145,14 +156,19 @@ public class SupabaseClient {
         return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    // Удаляет файл из хранилища БД
     public HttpResponse<String> deleteFile(String bucketName, String filePath)
             throws IOException, InterruptedException {
+        return deleteFile(bucketName, filePath, null);
+    }
+
+    public HttpResponse<String> deleteFile(String bucketName, String filePath, String userToken)
+            throws IOException, InterruptedException {
+        String authToken = (userToken != null && !userToken.isEmpty()) ? userToken : supabaseKey;
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(supabaseUrl + "/storage/v1/object/" + bucketName + "/" + filePath))
                 .header("apikey", supabaseKey)
-                .header("Authorization", "Bearer " + supabaseKey)
+                .header("Authorization", "Bearer " + authToken)
                 .DELETE()
                 .build();
 

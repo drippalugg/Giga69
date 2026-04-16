@@ -5,7 +5,7 @@
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.example</groupId>
-    <artifactId>partsstore67</artifactId>
+    <artifactId>giga67</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>MasterParts</name>
     <packaging>jar</packaging>
@@ -37,7 +37,7 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
-            <version>${javafx.version}</version>
+            <version>23</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>

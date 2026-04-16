@@ -47,7 +47,6 @@ public class MainController {
                 && authService.getCurrentUser().isAdmin()) {
             addAdminButton();
         }
-
     }
 
     private void addAdminButton() {

@@ -73,6 +73,14 @@ public class PartsService {
                         part.setImageUrl(partJson.get("image_url").getAsString());
                     }
 
+                    if (partJson.has("rating_avg") && !partJson.get("rating_avg").isJsonNull()) {
+                        part.setRatingAvg(partJson.get("rating_avg").getAsDouble());
+                    }
+
+                    if (partJson.has("reviews_count") && !partJson.get("reviews_count").isJsonNull()) {
+                        part.setReviewsCount(partJson.get("reviews_count").getAsInt());
+                    }
+
                     parts.add(part);
                 }
             }

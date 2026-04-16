@@ -11,17 +11,14 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-
 import java.util.List;
 
 public class OrdersController {
     @FXML private ListView<Order> ordersListView;
     @FXML private Label emptyLabel;
-
     private SupabaseAuthService authService;
     private OrdersService ordersService;
 

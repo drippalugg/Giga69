@@ -11,6 +11,8 @@ public class Part {
     private String description;
     private String imageUrl;
     private String specifications;
+    private double ratingAvg;
+    private int reviewsCount;
 
     // Конструктор
     public Part(int id, String name, String article, String brand, double price, double oldPrice, int categoryId) {
@@ -64,12 +66,28 @@ public class Part {
         return specifications;
     }
 
+    public double getRatingAvg() {
+        return ratingAvg;
+    }
+
+    public int getReviewsCount() {
+        return reviewsCount;
+    }
+
     public void setDescription(String description) {
         this.description = description;
     }
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public void setRatingAvg(double ratingAvg) {
+        this.ratingAvg = ratingAvg;
+    }
+
+    public void setReviewsCount(int reviewsCount) {
+        this.reviewsCount = reviewsCount;
     }
 
     public boolean hasDiscount() {
@@ -81,6 +99,11 @@ public class Part {
             return 0;
         }
         return (int) Math.round(((oldPrice - price) / oldPrice) * 100);
+    }
+
+    public String getStars() {
+        int filled = (int) Math.round(ratingAvg);
+        return "\u2605".repeat(filled) + "\u2606".repeat(5 - filled);
     }
 
     @Override
