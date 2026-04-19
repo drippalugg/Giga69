@@ -87,11 +87,9 @@ public class OrdersService {
                         } catch (Exception e) {
                         }
                     }
-
                     JsonArray itemsArray = orderJson.getAsJsonArray("items");
                     List<CartItem> items = gson.fromJson(itemsArray, new TypeToken<List<CartItem>>() {
                     }.getType());
-
                     Order order = new Order(
                             orderId,
                             userId,
@@ -100,7 +98,6 @@ public class OrdersService {
                             createdAt,
                             status
                     );
-
                     orders.add(order);
                 }
             }

@@ -6,12 +6,12 @@ import com.example.giga67.model.Part;
 import com.example.giga67.service.CartManager;
 import com.example.giga67.service.OrdersService;
 import com.example.giga67.service.SupabaseAuthService;
+import com.example.giga67.util.ImageCache;
 import com.example.giga67.util.SceneNavigator;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -79,7 +79,7 @@ public class CartController {
         String imageUrl = part.getImageUrl();
         if (imageUrl != null && !imageUrl.isEmpty()) {
             try {
-                imageView.setImage(new Image(imageUrl, 80, 80, true, true));
+                imageView.setImage(ImageCache.get(imageUrl, 80, 80, true, true));
             } catch (Exception e) {
                 System.err.println("Ошибка загрузки изображения в корзине: " + e.getMessage());
                 imageView.setImage(null);

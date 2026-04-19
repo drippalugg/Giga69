@@ -25,7 +25,6 @@ public class Review {
         this.updatedAt = updatedAt;
         this.isEdited = isEdited;
     }
-
     public String getId() { return id; }
     public int getPartId() { return partId; }
     public String getUserId() { return userId; }
@@ -35,11 +34,9 @@ public class Review {
     public ZonedDateTime getCreatedAt() { return createdAt; }
     public ZonedDateTime getUpdatedAt() { return updatedAt; }
     public boolean isEdited() { return isEdited; }
-
     public void setRating(int rating) { this.rating = rating; }
     public void setComment(String comment) { this.comment = comment; }
     public void setEdited(boolean edited) { isEdited = edited; }
-
     public String getFormattedDate() {
         if (createdAt != null) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
@@ -47,11 +44,9 @@ public class Review {
         }
         return "";
     }
-
     public String getStars() {
         return "\u2605".repeat(rating) + "\u2606".repeat(5 - rating);
     }
-
     @Override
     public String toString() {
         return "Review{id='" + id + "', partId=" + partId + ", rating=" + rating + ", comment='" + comment + "'}";

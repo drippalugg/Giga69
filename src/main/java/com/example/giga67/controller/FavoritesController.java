@@ -2,6 +2,7 @@ package com.example.giga67.controller;
 
 import com.example.giga67.model.Part;
 import com.example.giga67.service.CartManager;
+import com.example.giga67.util.ImageCache;
 import com.example.giga67.util.SceneNavigator;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -89,7 +90,7 @@ public class FavoritesController {
         String imageUrl = part.getImageUrl();
         if (imageUrl != null && !imageUrl.isEmpty()) {
             try {
-                imageView.setImage(new Image(imageUrl, 120, 120, true, true));
+                imageView.setImage(ImageCache.get(imageUrl, 120, 120, true, true));
                 card.getChildren().add(imageView);           // Изображение товара
             } catch (Exception e) {
                 Label iconLabel = new Label("🎁");

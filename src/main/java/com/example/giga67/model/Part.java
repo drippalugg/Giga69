@@ -1,5 +1,4 @@
 package com.example.giga67.model;
-
 public class Part {
     private int id;
     private String name;
@@ -13,8 +12,6 @@ public class Part {
     private String specifications;
     private double ratingAvg;
     private int reviewsCount;
-
-    // Конструктор
     public Part(int id, String name, String article, String brand, double price, double oldPrice, int categoryId) {
         this.id = id;
         this.name = name;
@@ -24,88 +21,67 @@ public class Part {
         this.oldPrice = oldPrice;
         this.categoryId = categoryId;
     }
-
-    // Геттеры/сеттеры
     public int getId() {
         return id;
     }
-
     public String getName() {
         return name;
     }
-
     public String getArticle() {
         return article;
     }
-
     public String getBrand() {
         return brand;
     }
-
     public double getPrice() {
         return price;
     }
-
     public double getOldPrice() {
         return oldPrice;
     }
-
     public int getCategoryId() {
         return categoryId;
     }
-
     public String getDescription() {
         return description;
     }
-
     public String getImageUrl() {
         return imageUrl;
     }
-
     public String getSpecifications() {
         return specifications;
     }
-
     public double getRatingAvg() {
         return ratingAvg;
     }
-
     public int getReviewsCount() {
         return reviewsCount;
     }
-
     public void setDescription(String description) {
         this.description = description;
     }
-
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
-
     public void setRatingAvg(double ratingAvg) {
         this.ratingAvg = ratingAvg;
     }
-
     public void setReviewsCount(int reviewsCount) {
         this.reviewsCount = reviewsCount;
     }
-
     public boolean hasDiscount() {
         return oldPrice > 0 && oldPrice > price;
     }
-
     public int getDiscountPercent() {
         if (!hasDiscount()) {
             return 0;
         }
         return (int) Math.round(((oldPrice - price) / oldPrice) * 100);
     }
-
     public String getStars() {
         int filled = (int) Math.round(ratingAvg);
         return "\u2605".repeat(filled) + "\u2606".repeat(5 - filled);
     }
-
     @Override
     public String toString() {
         return "Part{" +

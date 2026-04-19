@@ -6,6 +6,7 @@ import com.example.giga67.model.User;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -25,7 +26,7 @@ public class CartManager {
     private CartManager() {
         this.client = SupabaseClient.getInstance();
         this.authService = SupabaseAuthService.getInstance();
-        this.partsService = new PartsService();
+        this.partsService = PartsService.getInstance();
         this.gson = new Gson();
         this.cartItems = FXCollections.observableArrayList();
         this.favorites = FXCollections.observableArrayList();
@@ -44,12 +45,26 @@ public class CartManager {
         User user = authService.getCurrentUser();
 
         if (user == null) {
-            cartItems.clear();
-            favorites.clear();
+            if (Platform.isFxApplicationThread()) {
+                cartItems.clear();
+                favorites.clear();
+            } else {
+                Platform.runLater(() -> {
+                    cartItems.clear();
+                    favorites.clear();
+                });
+            }
             return;
         }
-        loadCartFromSupabase(user.getId());
-        loadFavoritesFromSupabase(user.getId());
+        String userId = user.getId();
+        partsService.onReady(() -> {
+            Thread loader = new Thread(() -> {
+                loadCartFromSupabase(userId);
+                loadFavoritesFromSupabase(userId);
+            }, "CartManager-Loader");
+            loader.setDaemon(true);
+            loader.start();
+        });
     }
 
     private void loadCartFromSupabase(String userId) {
@@ -60,7 +75,7 @@ public class CartManager {
 
             if (response.statusCode() == 200) {
                 JsonArray jsonArray = gson.fromJson(response.body(), JsonArray.class);
-                cartItems.clear();
+                List<CartItem> loaded = new ArrayList<>();
 
                 for (int i = 0; i < jsonArray.size(); i++) {
                     JsonObject item = jsonArray.get(i).getAsJsonObject();
@@ -69,9 +84,10 @@ public class CartManager {
 
                     Part part = partsService.getPartById(partId);
                     if (part != null) {
-                        cartItems.add(new CartItem(part, quantity));
+                        loaded.add(new CartItem(part, quantity));
                     }
                 }
+                Platform.runLater(() -> cartItems.setAll(loaded));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -86,7 +102,7 @@ public class CartManager {
 
             if (response.statusCode() == 200) {
                 JsonArray jsonArray = gson.fromJson(response.body(), JsonArray.class);
-                favorites.clear();
+                List<Part> loaded = new ArrayList<>();
 
                 for (int i = 0; i < jsonArray.size(); i++) {
                     JsonObject item = jsonArray.get(i).getAsJsonObject();
@@ -94,9 +110,10 @@ public class CartManager {
 
                     Part part = partsService.getPartById(partId);
                     if (part != null) {
-                        favorites.add(part);
+                        loaded.add(part);
                     }
                 }
+                Platform.runLater(() -> favorites.setAll(loaded));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -111,8 +128,6 @@ public class CartManager {
         if (user == null) {
             return;
         }
-
-        // Обновляем локально
         for (CartItem item : cartItems) {
             if (item.getPart().getId() == part.getId()) {
                 item.setQuantity(item.getQuantity() + quantity);
@@ -120,8 +135,6 @@ public class CartManager {
                 return;
             }
         }
-
-        // Добавляем новый товар
         cartItems.add(new CartItem(part, quantity));
         addCartToSupabase(user.getId(), part.getId(), quantity);
     }

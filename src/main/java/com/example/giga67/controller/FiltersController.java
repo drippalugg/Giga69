@@ -31,7 +31,6 @@ public class FiltersController {
     private void handleApply() {
         String article = safeTrim(articleField.getText());
         String brand = safeTrim(brandField.getText());
-
         Double priceMin = parseDoubleOrNull(priceMinField.getText());
         Double priceMax = parseDoubleOrNull(priceMaxField.getText());
 

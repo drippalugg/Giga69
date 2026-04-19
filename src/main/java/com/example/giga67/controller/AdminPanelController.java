@@ -90,7 +90,7 @@ public class AdminPanelController {
     private final ObservableList<StoreInventory> inventoryList = FXCollections.observableArrayList();
     private Store selectedStore = null;
 
-    private PartsService partsService = new PartsService();
+    private PartsService partsService = PartsService.getInstance();
 
     @FXML
     public void initialize() {
@@ -267,12 +267,14 @@ public class AdminPanelController {
 
                 HttpResponse<String> response = client.post(
                         "/rest/v1/parts",
-                        gson.toJson(json)
+                        gson.toJson(json),
+                        authService.getAccessToken()
                 );
 
                 if (response.statusCode() == 201 || response.statusCode() == 200) {
                     showInfo("Успех", "Товар успешно добавлен!");
                     loadProducts();
+                    partsService.reload();
                 } else {
                     showError("Ошибка", "Не удалось добавить товар: " + response.body());
                 }
@@ -306,12 +308,14 @@ public class AdminPanelController {
 
                 HttpResponse<String> response = client.patch(
                         "/rest/v1/parts?id=eq." + selected.getId(),
-                        gson.toJson(json)
+                        gson.toJson(json),
+                        authService.getAccessToken()
                 );
 
                 if (response.statusCode() == 200 || response.statusCode() == 204) {
                     showInfo("Успех", "Товар успешно обновлен!");
                     loadProducts();
+                    partsService.reload();
                 } else {
                     showError("Ошибка", "Не удалось обновить товар: " + response.body());
                 }
@@ -339,12 +343,14 @@ public class AdminPanelController {
                         deleteImageFromStorage(selected.getImageUrl());
                     }
                     HttpResponse<String> response = client.delete(
-                            "/rest/v1/parts?id=eq." + selected.getId()
+                            "/rest/v1/parts?id=eq." + selected.getId(),
+                            authService.getAccessToken()
                     );
 
                     if (response.statusCode() == 200 || response.statusCode() == 204) {
                         showInfo("Успех", "Товар удален!");
                         loadProducts();
+                        partsService.reload();
                     } else {
                         showError("Ошибка", "Не удалось удалить товар: " + response.body());
                     }
@@ -437,7 +443,7 @@ public class AdminPanelController {
                 json.addProperty("name", cat.getName());
                 json.addProperty("icon", cat.getIcon());
 
-                HttpResponse<String> response = client.post("/rest/v1/categories", gson.toJson(json));
+                HttpResponse<String> response = client.post("/rest/v1/categories", gson.toJson(json), authService.getAccessToken());
                 if (response.statusCode() == 201 || response.statusCode() == 200) {
                     showInfo("Успех", "Категория добавлена!");
                     loadCategories();
@@ -468,7 +474,8 @@ public class AdminPanelController {
 
                 HttpResponse<String> response = client.patch(
                         "/rest/v1/categories?id=eq." + selected.getId(),
-                        gson.toJson(json)
+                        gson.toJson(json),
+                        authService.getAccessToken()
                 );
 
                 if (response.statusCode() == 200 || response.statusCode() == 204) {
@@ -497,7 +504,8 @@ public class AdminPanelController {
             if (btn == ButtonType.OK) {
                 try {
                     HttpResponse<String> response = client.delete(
-                            "/rest/v1/categories?id=eq." + selected.getId()
+                            "/rest/v1/categories?id=eq." + selected.getId(),
+                            authService.getAccessToken()
                     );
                     if (response.statusCode() == 200 || response.statusCode() == 204) {
                         showInfo("Успех", "Категория удалена!");

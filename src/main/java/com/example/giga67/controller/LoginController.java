@@ -3,7 +3,7 @@ package com.example.giga67.controller;
 import com.example.giga67.service.CartManager;
 import com.example.giga67.service.SupabaseAuthService;
 import com.example.giga67.util.SceneNavigator;
-import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -74,29 +74,45 @@ public class LoginController {
             showError("Неверный формат email");
             return;
         }
-        boolean success = authService.login(email, password);
 
-        if (success) {
-            // сохранить или очистить
-            if (rememberMeCheckBox != null && rememberMeCheckBox.isSelected()) {
-                prefs.putBoolean(PREF_REMEMBER, true);
-                prefs.put(PREF_EMAIL, email);
-                prefs.put(PREF_PASSWORD, password);
-            } else {
-                prefs.putBoolean(PREF_REMEMBER, false);
-                prefs.remove(PREF_EMAIL);
-                prefs.remove(PREF_PASSWORD);
+        setFormDisabled(true);
+        showError("");
+
+        Task<Boolean> loginTask = new Task<>() {
+            @Override
+            protected Boolean call() {
+                return authService.login(email, password);
             }
+        };
 
+        loginTask.setOnSucceeded(ev -> {
+            setFormDisabled(false);
+            boolean success = Boolean.TRUE.equals(loginTask.getValue());
+            if (success) {
+                if (rememberMeCheckBox != null && rememberMeCheckBox.isSelected()) {
+                    prefs.putBoolean(PREF_REMEMBER, true);
+                    prefs.put(PREF_EMAIL, email);
+                    prefs.put(PREF_PASSWORD, password);
+                } else {
+                    prefs.putBoolean(PREF_REMEMBER, false);
+                    prefs.remove(PREF_EMAIL);
+                    prefs.remove(PREF_PASSWORD);
+                }
 
-
-            Platform.runLater(() -> {
                 CartManager.getInstance().loadData();
                 SceneNavigator.goToMain();
-            });
-        } else {
-            showError("Неверный email или пароль");
-        }
+            } else {
+                showError("Неверный email или пароль");
+            }
+        });
+        loginTask.setOnFailed(ev -> {
+            setFormDisabled(false);
+            showError("Ошибка подключения. Повторите попытку");
+        });
+
+        Thread t = new Thread(loginTask, "Login-Task");
+        t.setDaemon(true);
+        t.start();
     }
 
     @FXML
@@ -120,15 +136,43 @@ public class LoginController {
             showError("Пароль должен содержать минимум 6 символов");
             return;
         }
-        boolean success = authService.register(email, password, name);
 
-        if (success) {
-            Platform.runLater(() -> {
+        setFormDisabled(true);
+        showError("");
+
+        Task<Boolean> registerTask = new Task<>() {
+            @Override
+            protected Boolean call() {
+                return authService.register(email, password, name);
+            }
+        };
+
+        registerTask.setOnSucceeded(ev -> {
+            setFormDisabled(false);
+            boolean success = Boolean.TRUE.equals(registerTask.getValue());
+            if (success) {
                 SceneNavigator.goToMain();
-            });
-        } else {
-            showError("Ошибка регистрации. Email уже используется");
-        }
+            } else {
+                showError("Ошибка регистрации. Email уже используется");
+            }
+        });
+        registerTask.setOnFailed(ev -> {
+            setFormDisabled(false);
+            showError("Ошибка подключения. Повторите попытку");
+        });
+
+        Thread t = new Thread(registerTask, "Register-Task");
+        t.setDaemon(true);
+        t.start();
+    }
+
+    private void setFormDisabled(boolean disabled) {
+        if (loginButton != null) loginButton.setDisable(disabled);
+        if (registerButton != null) registerButton.setDisable(disabled);
+        if (toggleButton != null) toggleButton.setDisable(disabled);
+        if (emailField != null) emailField.setDisable(disabled);
+        if (passwordField != null) passwordField.setDisable(disabled);
+        if (nameField != null) nameField.setDisable(disabled);
     }
 
     @FXML

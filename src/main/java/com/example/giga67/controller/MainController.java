@@ -29,18 +29,19 @@ public class MainController {
 
     private PartsService partsService;
     private SupabaseAuthService authService;
+    private boolean adminButtonAdded = false;
 
     @FXML
     public void initialize() {
 
-        partsService = new PartsService();
+        partsService = PartsService.getInstance();
         authService = SupabaseAuthService.getInstance();
 
         if (locationLabel != null) {
             locationLabel.setText("г.Энгельс");
         }
 
-        loadCategories();
+        partsService.onReady(this::loadCategories);
         updateLoginButton();
         if (authService.isLoggedIn()
                 && authService.getCurrentUser() != null
@@ -50,28 +51,12 @@ public class MainController {
     }
 
     private void addAdminButton() {
+        if (adminButtonAdded) return;
         try {
-            // защита от дублей: если уже есть кнопка с таким текстом в родителе loginButton – выходим
-            if (loginButton != null && loginButton.getParent() != null) {
-                var parent = loginButton.getParent();
-
-                if (parent instanceof VBox vbox) {
-                    boolean exists = vbox.getChildren().stream()
-                            .filter(n -> n instanceof Button)
-                            .anyMatch(n -> "Администратор".equals(((Button) n).getText()));
-                    if (exists) return;
-                } else if (parent instanceof javafx.scene.layout.HBox hbox) {
-                    boolean exists = hbox.getChildren().stream()
-                            .filter(n -> n instanceof Button)
-                            .anyMatch(n -> "Администратор".equals(((Button) n).getText()));
-                    if (exists) return;
-                }
-            }
-
             Button adminBtn = new Button("Администратор");
             adminBtn.setStyle("-fx-font-size: 12; -fx-padding: 8 15; " +
                     "-fx-background-color: #e74c3c; -fx-text-fill: white; " +
-                    "-fx-font-weight: bold; -fx-cursor: hand;" + "-fx-translate-y: -10;");
+                    "-fx-font-weight: bold; -fx-cursor: hand;");
             adminBtn.setOnAction(e -> handleAdminPanel());
 
             // План А: если loginButton есть – добавляем рядом с ним
@@ -80,22 +65,24 @@ public class MainController {
 
                 if (parent instanceof VBox vbox) {
                     vbox.getChildren().add(adminBtn);
+                    adminButtonAdded = true;
                     return;
                 } else if (parent instanceof javafx.scene.layout.HBox hbox) {
                     hbox.getChildren().add(adminBtn);
+                    adminButtonAdded = true;
                     return;
                 }
             }
 
-            // План Б: если есть categoriesPane – вставляем над ним
+            // План Б: вставить в общий VBox между секциями «Поиск» и «Категории»
             if (categoriesPane != null && categoriesPane.getParent() != null) {
-                var parent = categoriesPane.getParent();
-                if (parent instanceof VBox vbox) {
-                    int index = vbox.getChildren().indexOf(categoriesPane);
-                    if (index >= 0) {
-                        vbox.getChildren().add(index, adminBtn);
-                    } else {
-                        vbox.getChildren().add(adminBtn);
+                var categoriesSection = categoriesPane.getParent();
+                var outer = categoriesSection.getParent();
+                if (outer instanceof VBox outerVBox) {
+                    int idx = outerVBox.getChildren().indexOf(categoriesSection);
+                    if (idx >= 0) {
+                        outerVBox.getChildren().add(idx, adminBtn);
+                        adminButtonAdded = true;
                     }
                 }
             }
@@ -180,7 +167,6 @@ public class MainController {
             );
             Parent root = loader.load();
             FiltersController controller = loader.getController();
-
             Stage dialog = new Stage();
             dialog.initOwner(filtersButton.getScene().getWindow());
             dialog.initModality(Modality.WINDOW_MODAL);
@@ -193,15 +179,12 @@ public class MainController {
                 scene.getStylesheets().add(cssUrl.toExternalForm());
             }
             dialog.setScene(scene);
-
             dialog.setResizable(false);
             dialog.showAndWait();
-
             FiltersController.FilterData data = controller.getResult();
             if (data == null) {
                 return;
             }
-
             // Базовый текст запроса
             String baseQuery = "";
             if (searchField != null && searchField.getText() != null) {
@@ -216,10 +199,8 @@ public class MainController {
             if (baseQuery.isBlank()) {
                 return;
             }
-
             StringBuilder sb = new StringBuilder();
             sb.append("q=").append(baseQuery);
-
             if (data.priceMin() != null) {
                 sb.append("&min=").append(data.priceMin());
             }
@@ -229,10 +210,8 @@ public class MainController {
             if (data.discountOnly()) {
                 sb.append("&discount=1");
             }
-
             String fullQuery = sb.toString();
             SceneNavigator.goToSearch(fullQuery);
-
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -7,6 +7,7 @@ import com.example.giga67.service.CartManager;
 import com.example.giga67.service.ReviewService;
 import com.example.giga67.service.StoreService;
 import com.example.giga67.service.SupabaseAuthService;
+import com.example.giga67.util.ImageCache;
 import com.example.giga67.util.SceneNavigator;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -66,10 +67,7 @@ public class ProductController {
         loadReviewsAsync();
     }
 
-    // ──────────────────────────────────────────────────────────────────
     // Отображение основной информации
-    // ──────────────────────────────────────────────────────────────────
-
     private void displayProduct() {
         if (currentPart == null) return;
 
@@ -101,7 +99,7 @@ public class ProductController {
         if (productImageView != null) {
             String imageUrl = currentPart.getImageUrl();
             if (imageUrl != null && !imageUrl.isEmpty()) {
-                try { productImageView.setImage(new Image(imageUrl, true)); }
+                try { productImageView.setImage(ImageCache.get(imageUrl)); }
                 catch (Exception ignored) {}
             }
         }
@@ -146,10 +144,7 @@ public class ProductController {
         }
     }
 
-    // ──────────────────────────────────────────────────────────────────
     // Асинхронная загрузка магазинов и отзывов
-    // ──────────────────────────────────────────────────────────────────
-
     private void loadStoresAsync() {
         if (currentPart == null) return;
         new Thread(() -> {
@@ -166,10 +161,8 @@ public class ProductController {
         }).start();
     }
 
-    // ──────────────────────────────────────────────────────────────────
-    // Построение UI магазинов
-    // ──────────────────────────────────────────────────────────────────
 
+    // Построение UI магазинов
     private void buildStoresUI(List<StoreInventory> stores) {
         if (storesContainer == null) return;
         storesContainer.getChildren().clear();
@@ -211,7 +204,7 @@ public class ProductController {
             clip.setArcHeight(8);
             logoView.setClip(clip);
             try {
-                logoView.setImage(new Image(logoUrl, 40, 40, true, true, true));
+                logoView.setImage(ImageCache.get(logoUrl, 40, 40, true, true));
             } catch (Exception ignored) {}
             storeIcon = logoView;
         } else {
@@ -219,8 +212,7 @@ public class ProductController {
             icon.setStyle("-fx-font-size: 24px;");
             storeIcon = icon;
         }
-
-        // Название + адрес
+        // Название и адрес
         VBox nameBox = new VBox(2);
         HBox.setHgrow(nameBox, Priority.ALWAYS);
 
@@ -255,10 +247,7 @@ public class ProductController {
         return card;
     }
 
-    // ──────────────────────────────────────────────────────────────────
     // Построение UI отзывов
-    // ──────────────────────────────────────────────────────────────────
-
     private void buildReviewsUI(List<Review> reviews) {
         if (reviewsContainer == null) return;
         reviewsContainer.getChildren().clear();

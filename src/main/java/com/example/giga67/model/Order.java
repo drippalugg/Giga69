@@ -11,7 +11,6 @@ public class Order {
     private String status;
     private double totalPrice;
     private List<CartItem> items;
-
     public Order(String id, String userId, List<CartItem> items, double totalPrice, LocalDateTime createdAt, String status) {
         this.id = id;
         this.userId = userId;
@@ -20,7 +19,6 @@ public class Order {
         this.createdAt = createdAt != null ? createdAt : LocalDateTime.now();
         this.status = status;
     }
-
     public String getId() {
         return id;
     }
@@ -49,7 +47,6 @@ public class Order {
         }
         return "";
     }
-
     public String getStatusText() {
         switch (status) {
             case "pending":
@@ -68,7 +65,6 @@ public class Order {
                 return status;
         }
     }
-
     @Override
     public String toString() {
         return "Заказ #" + id + " | " + getFormattedDate() + " | " + totalPrice + "₽ | " + getStatusText();

@@ -1,9 +1,11 @@
 package com.example.giga67;
 
 import javafx.application.Application;
+import com.example.giga67.service.PartsService;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import java.net.URL;
 
@@ -16,7 +18,12 @@ public class MainApp extends Application {
             primaryStage.setTitle("MasterParts");
             primaryStage.setWidth(600);
             primaryStage.setHeight(800);
-
+            PartsService.getInstance();
+            String iconPath = "/com/example/giga67/logo/MasterPartsLOGO.png";
+            URL iconUrl = getClass().getResource(iconPath);
+            if (iconUrl != null) {
+                primaryStage.getIcons().add(new Image(iconUrl.toExternalForm()));
+            }
             String fxmlPath = "/com/example/giga67/view/login.fxml";
             URL fxmlUrl = getClass().getResource(fxmlPath);
             if (fxmlUrl == null) {
@@ -32,7 +39,6 @@ public class MainApp extends Application {
             }
             primaryStage.setScene(scene);
             primaryStage.show();
-
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);

@@ -4,6 +4,7 @@ import com.example.giga67.model.Category;
 import com.example.giga67.model.Part;
 import com.example.giga67.service.CartManager;
 import com.example.giga67.service.PartsService;
+import com.example.giga67.util.ImageCache;
 import com.example.giga67.util.SceneNavigator;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -29,7 +30,7 @@ public class CategoryController {
 
     @FXML
     public void initialize() {
-        partsService = new PartsService();
+        partsService = PartsService.getInstance();
         cartManager = CartManager.getInstance();
     }
 
@@ -38,7 +39,7 @@ public class CategoryController {
         if (titleLabel != null) {
             titleLabel.setText(category.getName());
         }
-        loadProducts(partsService.getPartsByCategory(category.getId()));
+        partsService.onReady(() -> loadProducts(partsService.getPartsByCategory(category.getId())));
     }
 
     public void setSearchQuery(String query) {
@@ -63,19 +64,22 @@ public class CategoryController {
         Double maxPrice = parseDoubleOrNull(extractParam(query, "max"));
         boolean discountOnly = "1".equals(extractParam(query, "discount"));
 
-        // Вначале обычный текстовый поиск имени и т.д.
-        ObservableList<Part> base = partsService.searchParts(searchText);
+        final String searchQuery = searchText;
+        partsService.onReady(() -> {
+            // Вначале обычный текстовый поиск имени и т.д.
+            ObservableList<Part> base = partsService.searchParts(searchQuery);
 
-        // После фильтрация по цене и скидке
-        ObservableList<Part> filtered = base.filtered(part -> {
-            double price = part.getPrice();
-            if (minPrice != null && price < minPrice) return false;
-            if (maxPrice != null && price > maxPrice) return false;
-            if (discountOnly && !part.hasDiscount()) return false;
-            return true;
+            // После фильтрация по цене и скидке
+            ObservableList<Part> filtered = base.filtered(part -> {
+                double price = part.getPrice();
+                if (minPrice != null && price < minPrice) return false;
+                if (maxPrice != null && price > maxPrice) return false;
+                if (discountOnly && !part.hasDiscount()) return false;
+                return true;
+            });
+
+            loadProducts(filtered);
         });
-
-        loadProducts(filtered);
     }
 
     // --------------- Вспомогательные методы парсинга параметров поиска --------------- \\
@@ -139,8 +143,7 @@ public class CategoryController {
         String imageUrl = part.getImageUrl();
         if (imageUrl != null && !imageUrl.isEmpty()) {
             try {
-                Image img = new Image(imageUrl, 180, 180, true, true);
-                imageView.setImage(img);
+                imageView.setImage(ImageCache.get(imageUrl, 180, 180, true, true));
             } catch (Exception e) {
                 System.err.println("Ошибка загрузки изображения списка: " + e.getMessage());
             }

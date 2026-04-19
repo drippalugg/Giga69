@@ -15,12 +15,10 @@ public class Store {
         this.city = city;
         this.phone = phone;
     }
-
     public Store(String id, String name, String address, String city, String phone, String logoUrl) {
         this(id, name, address, city, phone);
         this.logoUrl = logoUrl;
     }
-
     public String getId() { return id; }
     public String getName() { return name; }
     public String getAddress() { return address; }
